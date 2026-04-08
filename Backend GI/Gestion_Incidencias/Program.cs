@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Kyocera.Microservice.DbContext.BoundedContext;
 using Kyocera.Microservice.DbContext.Repositorios;
-using Kyocera.Microservice.Models.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. Registro del Repositorio (SOLO UNA VEZ)
-// Usamos la interfaz IInterface y la clase IncidenciaRepositorio
-builder.Services.AddScoped<IInterface, IncidenciaRepositorio>();
+// 2. Registro del Repositorio
+builder.Services.AddScoped<IIncidenciasRepository, IncidenciaRepositorio>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
