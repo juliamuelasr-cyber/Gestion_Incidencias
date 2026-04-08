@@ -15,6 +15,16 @@ builder.Services.AddScoped<IIncidenciasRepository, IncidenciasRepository>();
 builder.Services.AddScoped<Gestion_Incidencias_v3.Services.IIncidenciasService, Gestion_Incidencias_v3.Services.IncidenciasService>();
 
 builder.Services.AddControllers();
+
+// Habilitar CORS para el frontend
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:5175") // URL de tu frontend
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+    
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
