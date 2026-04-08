@@ -9,9 +9,9 @@ namespace Gestion_Incidencias_v3.API.Controllers;
 [Route("api/[controller]")]
 public class IncidenciasController : ControllerBase
 {
-    private readonly IInterfaz _service;
+    private readonly IInterface _service;
 
-    public IncidenciasController(IInterfaz service)
+    public IncidenciasController(IInterface service)
     {
         _service = service;
     }
@@ -19,20 +19,20 @@ public class IncidenciasController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Incidencia>>> Get()
     {
-        return Ok(await _service.ObtenerTodas());
+        return Ok(await _service.GetAllAsync());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Incidencia>> Get(int id)
     {
-        var inc = await _service.ObtenerPorId(id);
+        var inc = await _service.GetByIdAsync(id);
         return inc == null ? NotFound() : Ok(inc);
     }
 
     [HttpPost]
     public async Task<ActionResult> Post(Incidencia inc)
     {
-        await _service.Crear(inc);
+        await _service.CreateAsync(inc);
         return CreatedAtAction(nameof(Get), new { id = inc.Id }, inc);
     }
 
@@ -40,14 +40,14 @@ public class IncidenciasController : ControllerBase
     public async Task<ActionResult> Put(int id, Incidencia inc)
     {
         if (id != inc.Id) return BadRequest();
-        await _service.Actualizar(inc);
+        await _service.UpdateAsync(inc);
         return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(int id)
     {
-        await _service.Eliminar(id);
+        await _service.DeleteAsync(id);
         return NoContent();
     }
 }
