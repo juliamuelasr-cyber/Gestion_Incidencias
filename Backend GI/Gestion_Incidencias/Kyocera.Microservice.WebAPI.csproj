@@ -21,8 +21,8 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Kyocera.Microservice.DbContext\Kyocera.Microservice.DbContext.csproj" />
 		<ProjectReference Include="..\Kyocera.Microservice.Models\Kyocera.Microservice.Models.csproj" />
+		<ProjectReference Include="..\Kyocera.Microservice.DbContext\Kyocera.Microservice.DbContext.csproj" />
 	</ItemGroup>
 
 </Project>

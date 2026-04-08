@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Kyocera.Microservice.Models.Models;
+using Kyocera.Microservice.Models.Models; // Verifica que este sea el namespace en Models_Incidencia.cs
+using Kyocera.Microservice.WebAPI.Interface; // Verifica que este sea el namespace en IInterface.cs
 using Kyocera.Microservice.DbContext.BoundedContext;
-using Kyocera.Microservice.WebAPI.Interface; // Referencia a la interfaz
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kyocera.Microservice.DbContext.Repositorios
 {
+    // Si IInterface sale en rojo, es que la Referencia de Proyecto del paso 1 falló
     public class IncidenciaRepositorio : IInterface
     {
         private readonly AppDbContext _context;
@@ -14,15 +17,9 @@ namespace Kyocera.Microservice.DbContext.Repositorios
             _context = context;
         }
 
-        public async Task<List<Incidencia>> GetAllAsync()
-        {
-            return await _context.Incidencias.ToListAsync();
-        }
+        public async Task<List<Incidencia>> GetAllAsync() => await _context.Incidencias.ToListAsync();
 
-        public async Task<Incidencia> GetByIdAsync(int id)
-        {
-            return await _context.Incidencias.FindAsync(id);
-        }
+        public async Task<Incidencia> GetByIdAsync(int id) => await _context.Incidencias.FindAsync(id);
 
         public async Task CreateAsync(Incidencia incidencia)
         {
@@ -38,10 +35,10 @@ namespace Kyocera.Microservice.DbContext.Repositorios
 
         public async Task DeleteAsync(int id)
         {
-            var incidencia = await _context.Incidencias.FindAsync(id);
-            if (incidencia != null)
+            var item = await _context.Incidencias.FindAsync(id);
+            if (item != null)
             {
-                _context.Incidencias.Remove(incidencia);
+                _context.Incidencias.Remove(item);
                 await _context.SaveChangesAsync();
             }
         }
