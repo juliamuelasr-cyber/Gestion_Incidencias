@@ -1,5 +1,5 @@
 using Kyocera.Microservice.Models.Models;
-using Kyocera.Microservice.WebAPI.Interface;
+using Kyocera.Microservice.Models.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 

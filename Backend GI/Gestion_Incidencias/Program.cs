@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Kyocera.Microservice.DbContext.BoundedContext;
 using Kyocera.Microservice.DbContext.Repositorios;
-using Kyocera.Microservice.WebAPI.Interface;
+using Kyocera.Microservice.Models.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

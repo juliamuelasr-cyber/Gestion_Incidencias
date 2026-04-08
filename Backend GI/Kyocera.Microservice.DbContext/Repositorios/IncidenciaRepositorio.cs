@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Kyocera.Microservice.Models.Models; // Verifica que este sea el namespace en Models_Incidencia.cs
-using Kyocera.Microservice.WebAPI.Interface; // Verifica que este sea el namespace en IInterface.cs
+using Kyocera.Microservice.Models.Interfaces; // Cambiado para usar la interfaz desde el proyecto Models
 using Kyocera.Microservice.DbContext.BoundedContext;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kyocera.Microservice.DbContext.Repositorios
 {
-    // Si IInterface sale en rojo, es que la Referencia de Proyecto del paso 1 falló
+    // Implementa la interfaz desde el proyecto Models
     public class IncidenciaRepositorio : IInterface
     {
         private readonly AppDbContext _context;

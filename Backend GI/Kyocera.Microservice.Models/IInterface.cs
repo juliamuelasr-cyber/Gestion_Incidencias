@@ -1,8 +1,8 @@
-﻿using Kyocera.Microservice.Models.Models;
+using Kyocera.Microservice.Models.Models;
 using System.Collections.Generic;
-using System.Threading.Tasks;       
+using System.Threading.Tasks;
 
-namespace Kyocera.Microservice.WebAPI.Interface
+namespace Kyocera.Microservice.Models.Interfaces
 {
     public interface IInterface
     {
@@ -11,6 +11,5 @@ namespace Kyocera.Microservice.WebAPI.Interface
         Task CreateAsync(Incidencia incidencia);
         Task UpdateAsync(Incidencia incidencia);
         Task DeleteAsync(int id);
-
     }
 }

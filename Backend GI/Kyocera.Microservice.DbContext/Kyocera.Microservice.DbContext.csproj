@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Kyocera.Microservice.Models\Kyocera.Microservice.Models.csproj" />
-    <ProjectReference Include="..\Gestion_Incidencias\Kyocera.Microservice.WebAPI.csproj" />
   </ItemGroup>
 	
 
