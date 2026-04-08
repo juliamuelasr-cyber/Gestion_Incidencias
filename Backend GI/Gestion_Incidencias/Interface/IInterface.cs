@@ -1,16 +1,15 @@
 ﻿using Kyocera.Microservice.Models.Models;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
-using Kyocera.Microservice.DbContext.BoundedContext;    
+using System.Collections.Generic;
+using System.Threading.Tasks;       
 
 namespace Kyocera.Microservice.WebAPI.Interface
 {
     public interface IInterface
     {
-        Task<List<GestionIncidenciasDB>> GetAllAsync();
-        Task<GestionIncidenciasDB> GetByIdAsync(int id);
-        Task CreateAsync(GestionIncidenciasDB incidencia);
-        Task UpdateAsync(GestionIncidenciasDB incidencia);
+        Task<List<Incidencia>> GetAllAsync();
+        Task<Incidencia> GetByIdAsync(int id);
+        Task CreateAsync(Incidencia incidencia);
+        Task UpdateAsync(Incidencia incidencia);
         Task DeleteAsync(int id);
 
     }
