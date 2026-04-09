@@ -33,7 +33,10 @@ public class AuthController : ControllerBase
         return Ok("Usuario registrado correctamente");
     }
 
-    // Generate a signed JWT token for the authenticated user
+    
+
+
+
     private string GenerateToken(string usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();

@@ -18,7 +18,7 @@ namespace Kyocera.Microservice.Application.Services
 
         public bool Register(string usuario, string password)
         {
-            // Implementación simple: usar un diccionario estático para almacenar usuarios en memoria
+            // Revisar si el usuario existe en esta memoria , si existiera no se podría registrar
             if (InMemoryUsers.Users.ContainsKey(usuario))
                 return false;
 
@@ -47,7 +47,7 @@ namespace Kyocera.Microservice.Application.Services
         }
     }
 
-    internal static class InMemoryUsers
+    internal static class InMemoryUsers // Clase para almacenar los usuarios registrados en la memoria en vez de en una BD real. O "diccionario en memoria"
     {
         public static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> Users =
             new System.Collections.Concurrent.ConcurrentDictionary<string, string>();
