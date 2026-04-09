@@ -1,15 +1,15 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Kyocera.Microservice.Models.Models;
 
-namespace Kyocera.Microservice.DbContext.Repositorios
+namespace Kyocera.Microservice.Application.Interfaces
 {
-    public interface IIncidenciasRepository
+    public interface IIncidenciasService
     {
         Task<IEnumerable<Incidencia>> GetAllAsync();
         Task<Incidencia?> GetByIdAsync(int id);
         Task<Incidencia> CreateAsync(Incidencia incidencia);
-        Task UpdateAsync(Incidencia incidencia);
-        Task DeleteAsync(int id);
+        Task<bool> UpdateAsync(int id, Incidencia incidencia);
+        Task<bool> DeleteAsync(int id);
     }
 }

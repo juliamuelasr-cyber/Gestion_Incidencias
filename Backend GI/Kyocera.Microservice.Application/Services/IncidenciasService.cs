@@ -1,72 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Kyocera.Microservice.DbContext.BoundedContext;
+using Kyocera.Microservice.Application.Interfaces;
+using Kyocera.Microservice.DbContext.Repository;
 using Kyocera.Microservice.Models.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Kyocera.Microservice.Application.Services
 {
     public class IncidenciasService : IIncidenciasService
     {
-        private readonly AppDbContext _context;
+        private readonly IIncidenciasRepository _repository;
 
-        public IncidenciasService(AppDbContext context)
+        public IncidenciasService(IIncidenciasRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public async Task<IEnumerable<Incidencia>> GetAllAsync()
         {
-            return await _context.Incidencias.ToListAsync();
+            return await _repository.GetAllAsync();
         }
 
         public async Task<Incidencia?> GetByIdAsync(int id)
         {
-            return await _context.Incidencias.FindAsync(id);
+            return await _repository.GetByIdAsync(id);
         }
 
         public async Task<Incidencia> CreateAsync(Incidencia incidencia)
         {
-            incidencia.FechaCreacion = DateTime.Now;
+            incidencia.FechaCreacion = DateTime.UtcNow;
 
-            await _context.Incidencias.AddAsync(incidencia);
-            await _context.SaveChangesAsync();
-
-            return incidencia;
+            return await _repository.CreateAsync(incidencia);
         }
 
         public async Task<bool> UpdateAsync(int id, Incidencia incidencia)
         {
-            if (id != incidencia.Id)
+            var existente = await _repository.GetByIdAsync(id);
+
+            if (existente == null)
                 return false;
 
-            var existing = await _context.Incidencias.FindAsync(id);
+            existente.Titulo = incidencia.Titulo;
+            existente.Descripcion = incidencia.Descripcion;
+            existente.Estado = incidencia.Estado;
+            existente.Prioridad = incidencia.Prioridad;
 
-            if (existing == null)
-                return false;
-
-            existing.Titulo = incidencia.Titulo;
-            existing.Descripcion = incidencia.Descripcion;
-            existing.Estado = incidencia.Estado;
-            existing.Prioridad = incidencia.Prioridad;
-            existing.FechaLimite = incidencia.FechaLimite;
-
-            await _context.SaveChangesAsync();
-
+            await _repository.UpdateAsync(existente);
             return true;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var incidencia = await _context.Incidencias.FindAsync(id);
+            var existe = await _repository.GetByIdAsync(id);
 
-            if (incidencia == null)
+            if (existe == null)
                 return false;
 
-            _context.Incidencias.Remove(incidencia);
-            await _context.SaveChangesAsync();
-
+            await _repository.DeleteAsync(id);
             return true;
         }
     }
