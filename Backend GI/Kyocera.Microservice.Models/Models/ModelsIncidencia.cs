@@ -6,14 +6,11 @@ namespace Kyocera.Microservice.Models.Models
         public int Id { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
-        public string Estado { get; set; }
-        public string Prioridad { get; set; }
+        public string UsuarioAsignado { get; set; }
+        public Estado Estado { get; set; }
+        public Estado Prioridad { get; set; }
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public DateTime? FechaLimite { get; set; }
     }
-    public class LoginRequest
-    {
-        public string Usuario { get; set; }
-        public string Password { get; set; }
-    }
+ 
 }
