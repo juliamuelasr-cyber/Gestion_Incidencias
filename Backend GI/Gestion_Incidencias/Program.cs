@@ -1,8 +1,13 @@
-using Microsoft.EntityFrameworkCore;
+using Kyocera.Microservice.Application.Interfaces;
+using Kyocera.Microservice.Application.Services;
 using Kyocera.Microservice.DbContext.BoundedContext;
 using Kyocera.Microservice.DbContext.Repository;
-using Kyocera.Microservice.Application.Services;
-using Kyocera.Microservice.Application.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +20,30 @@ builder.Services.AddScoped<IIncidenciasRepository, IncidenciasRepository>();
 
 //3. Registro del servicio 
 builder.Services.AddScoped<IIncidenciasService, IncidenciasService>();
+
+//4. Configuracion token 
+var key = Encoding.UTF8.GetBytes("clave_super_secreta");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = "tuApp",
+        ValidAudience = "tuApp",
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+});
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -30,7 +59,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
+
+
+

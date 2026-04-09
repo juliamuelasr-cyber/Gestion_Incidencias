@@ -11,4 +11,9 @@ namespace Kyocera.Microservice.Models.Models
         public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
         public DateTime? FechaLimite { get; set; }
     }
+    public class LoginRequest
+    {
+        public string Usuario { get; set; }
+        public string Password { get; set; }
+    }
 }

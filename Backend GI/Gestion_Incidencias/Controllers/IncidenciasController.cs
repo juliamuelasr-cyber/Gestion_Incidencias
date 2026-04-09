@@ -1,12 +1,14 @@
+using Kyocera.Microservice.DbContext.Repository;
+using Kyocera.Microservice.Models.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Kyocera.Microservice.Models.Models;
-using Microsoft.AspNetCore.Mvc;
-using Kyocera.Microservice.DbContext.Repository;
 
 namespace Kyocera.Microservice.Controllers  
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class IncidenciasController : ControllerBase
