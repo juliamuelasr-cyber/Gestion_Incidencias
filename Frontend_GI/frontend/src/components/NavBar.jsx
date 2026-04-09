@@ -1,16 +1,14 @@
 // src/components/NavBar.jsx
-import { Link } from 'react-router-dom'
-import './NavBar.css' // Opcional: para estilos
+import { Link } from 'react-router-dom';
 
 export default function NavBar() {
   return (
     <nav className="navbar">
-      <h1>Gestión de Incidencias</h1>
+      {/* Eliminamos el h1 de aquí porque ya lo pusimos en App.jsx */}
       <div className="nav-links">
         <Link to="/">Inicio</Link>
         <Link to="/crear">Nueva Incidencia</Link>
-        <Link to="/login">Login</Link>
       </div>
     </nav>
-  )
+  );
 }

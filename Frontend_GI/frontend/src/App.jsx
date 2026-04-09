@@ -1,15 +1,28 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import NavBar from './components/NavBar'
-import IncidentList from './pages/IncidentList'
-import IncidentDetail from './pages/IncidentDetail'
-import IncidentForm from './pages/IncidentForm'
-import Login from './components/Login'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import IncidentList from './pages/IncidentList';
+import IncidentDetail from './pages/IncidentDetail';
+import IncidentForm from './pages/IncidentForm';
+import Login from './components/Login'; // Importamos tu componente de login
+import NavBar from './components/NavBar'; // Importamos tu NavBar
+import './App.css';
 
-function App() {
+// Este componente controla qué se muestra según la ruta
+function AppContent() {
+  const location = useLocation();
+  
+  // Si la ruta es '/login', no mostramos el NavBar
+  const isLoginPage = location.pathname === '/login';
+
   return (
-    <Router>
-      <NavBar />
+    <div className="app-container">
+      {/* El título h1 ahora es global y aparecerá siempre */}
+      <header>
+        <h1>Gestión de Incidencias</h1>
+      </header>
+
+      {/* Solo renderiza el NavBar si NO es la página de login */}
+      {!isLoginPage && <NavBar />}
+
       <main>
         <Routes>
           <Route path="/" element={<IncidentList />} />
@@ -19,8 +32,16 @@ function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
       </main>
-    </Router>
-  )
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+export default App;
