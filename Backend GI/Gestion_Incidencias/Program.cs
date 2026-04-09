@@ -9,8 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-using AppAuthorizationService = Kyocera.Microservice.Application.Services.IAuthorizationService;
-
+using AuthSvc = Kyocera.Microservice.Application.Services.IAuthorizationService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,8 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IIncidenciasRepository, IncidenciasRepository>();
 
 //3. Registro del servicio 
+builder.Services.AddScoped<AuthSvc, AuthService>();
 builder.Services.AddScoped<IIncidenciasService, IncidenciasService>();
-builder.Services.AddScoped<AppAuthorizationService, AuthService>(); //Este es el de servicio de autentificación
 
 //4. Configuracion token 
 var key = Encoding.UTF8.GetBytes("clave_super_secreta");
