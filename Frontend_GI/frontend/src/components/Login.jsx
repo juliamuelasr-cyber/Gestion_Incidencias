@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import kyoImg from '../assets/Kyocera_logo.svg.png'
 
 export default function Login() {
   const [name, setName] = useState('')
@@ -19,140 +20,96 @@ export default function Login() {
       if (password !== confirmPassword) {
         Swal.fire({
           icon: 'error',
-          title: 'Oops...',
+          title: 'Error',
           text: 'Las contraseñas no coinciden',
           confirmButtonColor: 'var(--kyocera-red)'
         })
         return
       }
 
-      console.log('Registro:', { name, email, password })
-
       Swal.fire({
         icon: 'success',
-        title: '¡Registro completado con éxito!',
-        confirmButtonColor: 'var(--btn-confirm-sweetAlert)'
-      }).then(() => {
-        setIsRegister(false)
-      })
+        title: 'Registro completado',
+        confirmButtonColor: 'var(--kyocera-red)'
+      }).then(() => setIsRegister(false))
 
     } else {
-      console.log('Login:', { email, password })
-
       Swal.fire({
         icon: 'success',
-        title: '¡Bienvenid@!',
-        text: `Hola ${name} 👋`,
-        confirmButtonColor: 'var(--btn-confirm-sweetAlert)'
-      }).then(() => {
-        navigate('/')
-      })
+        title: 'Bienvenido',
+        text: `Hola ${name}👋`,
+        confirmButtonColor: 'var(--kyocera-red)'
+      }).then(() => navigate('/'))
     }
 
-    // limpiar campos
     setName('')
     setEmail('')
     setPassword('')
     setConfirmPassword('')
   }
 
-  const inputStyle = {
-    width: '100%',
-    padding: '8px',
-    boxSizing: 'border-box',
-    border: '1px solid #ccc',
-    borderRadius: '4px'
-  }
-
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', textAlign: 'left' }}>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
-      >
-        {isRegister && (
-          <div>
-            <label htmlFor="name">Nombre:</label>
+    <div className="login-page">
+
+      {/* HEADER LOGIN */}
+      <div className="login-header">
+        <img src={kyoImg} alt="Kyocera Logo" />
+        <h1>Gestión de Incidencias</h1>
+      </div>
+
+      {/* FORM */}
+      <div className="login-container">
+        <form onSubmit={handleSubmit} className="login-form">
+
+          {isRegister && (
             <input
               type="text"
-              id="name"
+              placeholder="Nombre"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              style={inputStyle}
             />
-          </div>
-        )}
+          )}
 
-        <div>
-          <label htmlFor="email">Email:</label>
           <input
             type="email"
-            id="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={inputStyle}
           />
-        </div>
 
-        <div>
-          <label htmlFor="password">Contraseña:</label>
           <input
             type="password"
-            id="password"
+            placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={inputStyle}
           />
-        </div>
 
-        {isRegister && (
-          <div>
-            <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
+          {isRegister && (
             <input
               type="password"
-              id="confirmPassword"
+              placeholder="Confirmar contraseña"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              style={inputStyle}
             />
-          </div>
-        )}
+          )}
 
-        <button
-          type="submit"
-          style={{
-            padding: '10px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          {isRegister ? 'Registrarse' : 'Entrar'}
-        </button>
-      </form>
+          <button type="submit">
+            {isRegister ? 'Registrarse' : 'Entrar'}
+          </button>
+        </form>
 
-      <p style={{ marginTop: '15px', fontSize: '14px' }}>
-        {isRegister ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}{' '}
-        <button
-          type="button"
-          onClick={() => setIsRegister(!isRegister)}
-          style={{
-            color: '#007bff',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: 0
-          }}
-        >
-          {isRegister ? 'Iniciar sesión' : 'Regístrate'}
-        </button>
-      </p>
+        <p className="login-switch">
+          {isRegister ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'}{' '}
+          <button type="button" onClick={() => setIsRegister(!isRegister)}>
+            {isRegister ? 'Iniciar sesión' : 'Regístrate'}
+          </button>
+        </p>
+      </div>
+
     </div>
   )
 }

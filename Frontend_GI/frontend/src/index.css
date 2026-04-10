@@ -1,12 +1,10 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
+  --text: #000000;
+  --text-h: #ffffff;
   --bg: #f8f9fa; /* Fondo gris claro de la imagen */
   --border: #e5e4e7;
   --code-bg: #f4f3ec;
-  --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
@@ -16,6 +14,7 @@
   --mono: ui-monospace, Consolas, monospace;
   --kyocera-red: #c31d0e; /* Color corporativo de la imagen */
   --btn-confirm-sweetAlert: #3085d6; /* Color de confirmación para SweetAlert */
+  --bg-sidebar: #f5a8a8; /* Fondo blanco para la barra lateral */
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
@@ -54,28 +53,31 @@ body {
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  min-height: 100svh;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
 }
 
 /* Estilos para el Header y títulos globales */
-h1,
-h2 {
+h1, h2 {
   font-family: var(--heading);
-  font-weight: 500;
+  font-weight: 400;
+  text-align: center;
   color: var(--kyocera-red); /* Títulos en rojo como en la imagen */
+}
+
+h3 {
+  font-family: var(--heading);
+  font-weight: 200;
+  text-align: center;
+  color: var(--text);
 }
 
 h1 {
   font-size: 48px;
   letter-spacing: 1px;
-  margin: 40px 0 10px;
+  margin: 30px 0 20px;
   text-transform: uppercase; /* Estilo de "GETSIÓN INCIDENCIAS" */
   @media (max-width: 1024px) {
     font-size: 32px;
