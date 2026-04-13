@@ -1,164 +1,91 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Swal from 'sweetalert2'; // Importamos SweetAlert2
+import { Save } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    status: 'abierta',
-    priority: 'media'
+  const [formData, setFormData] = useState({ 
+    title: '', 
+    description: '', 
+    status: 'abierta', 
+    priority: 'media', 
+    assignedUser: '', 
+    FechaLimite: '' 
   });
 
-  const [loading, setLoading] = useState(!!id);
-
   useEffect(() => {
-    if (id && incidents.length > 0) {
-      const existingIncident = incidents.find(inc => inc.id === parseInt(id));
-      if (existingIncident) {
-        setFormData({
-          title: existingIncident.title,
-          description: existingIncident.description || existingIncident.body,
-          status: existingIncident.status,
-          priority: existingIncident.priority
-        });
-      }
-      setLoading(false);
-    } else if (id) {
-      setLoading(false);
+    if (id) {
+      const existing = incidents.find(inc => inc.id === parseInt(id));
+      if (existing) setFormData(existing);
     }
   }, [id, incidents]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
+    const now = new Date().toLocaleString();
 
     if (id) {
-      // LÓGICA DE EDICIÓN
-      const updatedIncidents = incidents.map(inc => 
-        inc.id === parseInt(id) ? { ...formData, id: parseInt(id) } : inc
-      );
-      setIncidents(updatedIncidents);
-
-      // POP-UP DE EDICIÓN
-      Swal.fire({
-        icon: 'success',
-        title: 'Incidencia actualizada',
-        text: 'Los cambios se han guardado correctamente',
-        confirmButtonColor: 'var(--kyocera-red)' // Usamos tu variable de color
-      }).then(() => {
-        navigate('/');
-      });
-
+      setIncidents(incidents.map(inc => inc.id === parseInt(id) ? { ...formData, FechaActualizacion: now } : inc));
+      Swal.fire({ icon: 'success', title: 'Actualizado', confirmButtonColor: 'var(--kyocera-red)' }).then(() => navigate('/'));
     } else {
-      // LÓGICA DE CREACIÓN
-      const newIncident = {
-        ...formData,
-        id: Date.now(),
-      };
-      onAdd(newIncident);
-
-      // POP-UP DE CREACIÓN
-      Swal.fire({
-        icon: 'success',
-        title: '¡Registrada!',
-        text: 'La nueva incidencia ha sido creada con éxito',
-        confirmButtonColor: 'var(--kyocera-red)'
-      }).then(() => {
-        navigate('/');
-      });
+      onAdd({ ...formData, id: Date.now(), FechaCreacion: now, FechaActualizacion: now, comments: [] });
+      Swal.fire({ icon: 'success', title: '¡Creada!', confirmButtonColor: 'var(--kyocera-red)' }).then(() => navigate('/'));
     }
   };
 
-  if (loading) return <p>Cargando datos de la incidencia...</p>;
-
   return (
     <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'left' }}>
-      <h2>{id ? 'Editar Incidencia' : 'Crear Nueva Incidencia'}</h2>
+      <h2>{id ? 'Editar Incidencia' : 'Nueva Incidencia'}</h2>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        
+        {/* CAMPOS PARA NUEVA INCIDENCIA */}
+        {!id && (
+          <>
+            <label>Título:</label>
+            <input className="search-input" type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required />
+            <label>Fecha Límite:</label>
+            <input className="search-input" type="date" value={formData.FechaLimite} onChange={(e) => setFormData({...formData, FechaLimite: e.target.value})} required />
+          </>
+        )}
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="title">Título:</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-            style={{ padding: '8px' }}
-          />
-        </div>
+        <label>Descripción:</label>
+        <textarea className="search-input" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} required rows="4" />
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="description">Descripción:</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            required
-            rows="5"
-            style={{ padding: '8px' }}
-          />
-        </div>
+        {/* CAMPO DE USUARIO ASIGNADO (Añadido aquí para que funcione) */}
+        <label>Usuario Asignado:</label>
+        <input 
+          className="search-input" 
+          type="text" 
+          placeholder="Nombre del técnico..."
+          value={formData.assignedUser} 
+          onChange={(e) => setFormData({...formData, assignedUser: e.target.value})} 
+        />
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="status">Estado:</label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            style={{ padding: '8px' }}
-          >
-            <option value="abierta">Abierta</option>
-            <option value="en proceso">En proceso</option>
-            <option value="resuelta">Resuelta</option>
-            <option value="cerrada">Cerrada</option>
-          </select>
-        </div>
+        <label>Prioridad:</label>
+        <select className="search-input" value={formData.priority} onChange={(e) => setFormData({...formData, priority: e.target.value})}>
+          <option value="baja">Baja</option>
+          <option value="media">Media</option>
+          <option value="alta">Alta</option>
+          <option value="critica">Crítica</option>
+        </select>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor="priority">Prioridad:</label>
-          <select
-            id="priority"
-            name="priority"
-            value={formData.priority}
-            onChange={handleChange}
-            style={{ padding: '8px' }}
-          >
-            <option value="baja">Baja</option>
-            <option value="media">Media</option>
-            <option value="alta">Alta</option>
-            <option value="critica">Crítica</option>
-          </select>
-        </div>
+        {/* CAMPOS SOLO PARA EDICIÓN */}
+        {id && (
+          <>
+            <label>Estado:</label>
+            <select className="search-input" value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})}>
+              <option value="abierta">Abierta</option>
+              <option value="en proceso">En proceso</option>
+              <option value="resuelta">Resuelta</option>
+              <option value="cerrada">Cerrada</option>
+            </select>
+          </>
+        )}
 
-        <button
-          type="submit"
-          style={{
-            padding: '10px',
-            background: 'var(--kyocera-red)', // Cambiado a tu color corporativo
-            color: 'white',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          {id ? 'Guardar Cambios' : 'Crear Incidencia'}
+        <button type="submit" className="btn-search" style={{ justifyContent: 'center' }}>
+          <Save size={18}/> {id ? 'Guardar Cambios' : 'Registrar'}
         </button>
       </form>
     </div>

@@ -1,86 +1,83 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { MessageSquareText, CalendarClock, History, User2, ArrowLeft, ShieldAlert } from 'lucide-react';
 
-// Recibimos la lista de incidencias real como prop desde App.jsx
-export default function IncidentDetail({ incidents }) {
+export default function IncidentDetail({ incidents, setIncidents }) {
   const { id } = useParams();
-
-  // Buscamos la incidencia en nuestra lista local usando el ID de la URL
+  const [newComment, setNewComment] = useState('');
   const incident = incidents.find(inc => inc.id === parseInt(id));
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'abierta': return '#3498db';
-      case 'en proceso': return '#f39c12';
-      case 'resuelta': return '#2ecc71';
-      case 'cerrada': return '#7f8c8d';
-      default: return '#ccc';
-    }
+  const addComment = () => {
+    if (!newComment.trim()) return;
+    const updated = incidents.map(inc => 
+      inc.id === incident.id ? { ...inc, comments: [...(inc.comments || []), { text: newComment, date: new Date().toLocaleString() }] } : inc
+    );
+    setIncidents(updated);
+    setNewComment('');
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'baja': return '#2ecc71';
-      case 'media': return '#f1c40f';
-      case 'alta': return '#e67e22';
-      case 'critica': return '#e74c3c';
-      default: return '#ccc';
-    }
-  };
-
-  // Si aún no hay datos o no se encuentra la incidencia
-  if (!incident) return <p style={{ padding: '20px' }}>No se encontró la incidencia o no hay datos disponibles.</p>;
+  if (!incident) return <p>Incidencia no encontrada.</p>;
 
   return (
-    <div style={{ textAlign: 'left', maxWidth: '600px', margin: '0 auto' }}>
-      <h2>Detalle de la Incidencia #{incident.id}</h2>
+    <div style={{ textAlign: 'left', maxWidth: '700px', margin: '0 auto' }}>
+      <div style={{ border: '1px solid #ddd', padding: '30px', borderRadius: '16px', background: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+        
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+          <h2 style={{ margin: 0 }}>{incident.title}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#e60012', fontSize: '13px', fontWeight: 'bold' }}>
+            <ShieldAlert size={16} /> Límite: {incident.FechaLimite}
+          </div>
+        </div>
 
-      <div
-        style={{
-          border: '1px solid #ccc',
-          padding: '20px',
-          borderRadius: '8px'
-        }}
-      >
-        <h3>{incident.title}</h3>
+        <p style={{ color: '#444', lineHeight: '1.6' }}>{incident.description}</p>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '20px', color: '#666' }}>
+          <User2 size={18} /> <strong>Técnico asignado:</strong> {incident.assignedUser || 'Pendiente'}
+        </div>
 
-        <p><strong>Descripción:</strong></p>
-        <p>{incident.description || incident.body}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '25px', padding: '15px', background: '#f8f9fa', borderRadius: '10px' }}>
+          <div style={{ fontSize: '12px', color: '#777', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <CalendarClock size={14} /> Creada: {incident.FechaCreacion}
+          </div>
+          <div style={{ fontSize: '12px', color: '#777', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <History size={14} /> Actualizada: {incident.FechaActualizacion}
+          </div>
+        </div>
 
-        {/* BADGES - Ahora muestran el estado y prioridad real que elegiste en el formulario */}
-        <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-          <span
-            style={{
-              background: getStatusColor(incident.status),
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '5px',
-              fontSize: '12px'
-            }}
-          >
-            {incident.status}
-          </span>
+        <hr style={{ margin: '30px 0', border: 'none', borderTop: '1px solid #eee' }} />
+        
+        <h4 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <MessageSquareText size={20} color="var(--kyocera-red)" /> Historial de Comentarios
+        </h4>
 
-          <span
-            style={{
-              background: getPriorityColor(incident.priority),
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '5px',
-              fontSize: '12px'
-            }}
-          >
-            {incident.priority}
-          </span>
+        <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '20px', padding: '10px', background: '#fafafa', borderRadius: '8px' }}>
+          {incident.comments?.length > 0 ? (
+            incident.comments.map((c, i) => (
+              <div key={i} style={{ marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid #f0f0f0' }}>
+                <div style={{ fontSize: '11px', color: '#999', marginBottom: '4px' }}>{c.date}</div>
+                <div style={{ fontSize: '13px', color: '#333' }}>{c.text}</div>
+              </div>
+            ))
+          ) : (
+            <p style={{ fontSize: '13px', color: '#999', textAlign: 'center' }}>No hay comentarios todavía.</p>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <input 
+            className="search-input" 
+            style={{ flex: 1, marginBottom: 0 }} 
+            value={newComment} 
+            onChange={(e) => setNewComment(e.target.value)} 
+            placeholder="Escribe una actualización..." 
+          />
+          <button onClick={addComment} className="btn-search" style={{ width: 'auto' }}>Enviar</button>
         </div>
       </div>
 
-      <div style={{ marginTop: '20px' }}>
-        <Link to="/" style={{ marginRight: '15px' }}>
-          ⬅ Volver al listado
-        </Link>
-
-        <Link to={`/editar/${incident.id}`}>
-          ✏️ Editar
+      <div style={{ marginTop: '25px', display: 'flex', justifyContent: 'center' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: '#666', fontWeight: 'bold' }}>
+          <ArrowLeft size={18} /> Volver al listado principal
         </Link>
       </div>
     </div>
