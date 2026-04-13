@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import IncidentList from './pages/IncidentList'
 import IncidentDetail from './pages/IncidentDetail'
@@ -8,67 +8,61 @@ import Login from './components/Login'
 import NavBar from './components/NavBar'
 
 import kyoImg from './assets/Kyocera_logo.svg.png'
-import kyoImgMini from './assets/kyocera.png'
 import './App.css'
 
 /* =========================
-    LAYOUT PRINCIPAL (Mantenemos tu estilo exacto)
+    LAYOUT PRINCIPAL (Sin cambios de estilo)
 ========================= */
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   return (
     <div className="app-layout">
-
-      {/* SIDEBAR (NORMAL / MINI) */}
       {sidebarOpen ? (
         <aside className="sidebar">
           <NavBar />
         </aside>
       ) : (
-        <aside className="sidebar-mini">
-          {/* Aquí puedes poner el kyoImgMini si quieres */}
-        </aside>
+        <aside className="sidebar-mini"></aside>
       )}
 
-      {/* CONTENIDO PRINCIPAL */}
       <div className="main-area">
-
-        {/* HEADER */}
         <header className="hero">
-
-          {/* BOTÓN TOGGLE */}
           <button
             className="toggle-btn"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             ☰
           </button>
-
           <img src={kyoImg} className="base" alt="Kyocera Logo" />
           <h1>Gestión de Incidencias</h1>
         </header>
 
-        {/* PÁGINAS */}
         <main className="main-content">
           <div className="page-wrapper">
             <Outlet />
           </div>
         </main>
-
       </div>
     </div>
   )
 }
 
 /* =========================
-    APP ROUTER
+    APP ROUTER con LocalStorage
 ========================= */
 function App() {
-  // NUEVO: Estado global para las incidencias
-  const [incidents, setIncidents] = useState([]);
+  // Cargamos las incidencias del localStorage al iniciar, si no hay nada, empezamos con lista vacía
+  const [incidents, setIncidents] = useState(() => {
+    const savedIncidents = localStorage.getItem('mis_incidencias');
+    return savedIncidents ? JSON.parse(savedIncidents) : [];
+  });
 
-  // NUEVO: Función para añadir incidencias
+  // Cada vez que la lista de incidencias cambie, la guardamos en el localStorage
+  useEffect(() => {
+    localStorage.setItem('mis_incidencias', JSON.stringify(incidents));
+  }, [incidents]);
+
   const addIncident = (newInc) => {
     setIncidents([...incidents, newInc]);
   };
@@ -76,19 +70,26 @@ function App() {
   return (
     <Router>
       <Routes>
-
-        {/* LOGIN SIN SIDEBAR */}
         <Route path="/login" element={<Login />} />
 
-        {/* APP PRINCIPAL - Pasamos los datos a través de context o props */}
         <Route element={<AppLayout />}>
-          {/* Usamos el componente de React para inyectar las props en el Outlet o pasarlas directamente */}
-          <Route path="/" element={<IncidentList incidents={incidents} setIncidents={setIncidents} />} />
-          <Route path="/crear" element={<IncidentForm onAdd={addIncident} />} />
-          <Route path="/editar/:id" element={<IncidentForm incidents={incidents} setIncidents={setIncidents} />} />
-          <Route path="/incidencia/:id" element={<IncidentDetail incidents={incidents} />} />
+          <Route 
+            path="/" 
+            element={<IncidentList incidents={incidents} setIncidents={setIncidents} />} 
+          />
+          <Route 
+            path="/crear" 
+            element={<IncidentForm onAdd={addIncident} />} 
+          />
+          <Route 
+            path="/editar/:id" 
+            element={<IncidentForm incidents={incidents} setIncidents={setIncidents} />} 
+          />
+          <Route 
+            path="/incidencia/:id" 
+            element={<IncidentDetail incidents={incidents} />} 
+          />
         </Route>
-
       </Routes>
     </Router>
   )

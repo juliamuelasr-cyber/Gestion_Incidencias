@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2'; // Importamos SweetAlert2
 
-// Recibimos 'onAdd' para crear y la lista 'incidents' para cuando toque editar
 export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -15,7 +15,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
 
   const [loading, setLoading] = useState(!!id);
 
-  // Si estamos editando, buscamos la incidencia en nuestro estado local
   useEffect(() => {
     if (id && incidents.length > 0) {
       const existingIncident = incidents.find(inc => inc.id === parseInt(id));
@@ -29,8 +28,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
       }
       setLoading(false);
     } else if (id) {
-      // Si el ID existe pero la lista está vacía (por ejemplo al recargar), 
-      // quitamos el loading para poder usar el formulario
       setLoading(false);
     }
   }, [id, incidents]);
@@ -46,23 +43,40 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
     e.preventDefault();
 
     if (id) {
-      // LÓGICA DE EDICIÓN: Actualizamos el registro existente en la lista global
+      // LÓGICA DE EDICIÓN
       const updatedIncidents = incidents.map(inc => 
         inc.id === parseInt(id) ? { ...formData, id: parseInt(id) } : inc
       );
       setIncidents(updatedIncidents);
-      alert('¡Incidencia editada con éxito!');
+
+      // POP-UP DE EDICIÓN
+      Swal.fire({
+        icon: 'success',
+        title: 'Incidencia actualizada',
+        text: 'Los cambios se han guardado correctamente',
+        confirmButtonColor: 'var(--kyocera-red)' // Usamos tu variable de color
+      }).then(() => {
+        navigate('/');
+      });
+
     } else {
-      // LÓGICA DE CREACIÓN: Generamos un ID y usamos onAdd
+      // LÓGICA DE CREACIÓN
       const newIncident = {
         ...formData,
-        id: Date.now(), // ID único temporal
+        id: Date.now(),
       };
       onAdd(newIncident);
-      alert('¡Incidencia creada con éxito!');
-    }
 
-    navigate('/');
+      // POP-UP DE CREACIÓN
+      Swal.fire({
+        icon: 'success',
+        title: '¡Registrada!',
+        text: 'La nueva incidencia ha sido creada con éxito',
+        confirmButtonColor: 'var(--kyocera-red)'
+      }).then(() => {
+        navigate('/');
+      });
+    }
   };
 
   if (loading) return <p>Cargando datos de la incidencia...</p>;
@@ -75,7 +89,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
         onSubmit={handleSubmit}
         style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
       >
-        {/* TÍTULO */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label htmlFor="title">Título:</label>
           <input
@@ -89,7 +102,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
           />
         </div>
 
-        {/* DESCRIPCIÓN */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label htmlFor="description">Descripción:</label>
           <textarea
@@ -103,7 +115,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
           />
         </div>
 
-        {/* ESTADO */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label htmlFor="status">Estado:</label>
           <select
@@ -120,7 +131,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
           </select>
         </div>
 
-        {/* PRIORIDAD */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <label htmlFor="priority">Prioridad:</label>
           <select
@@ -137,15 +147,15 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
           </select>
         </div>
 
-        {/* BOTÓN - Mantenemos tu color 'blue' y estilos */}
         <button
           type="submit"
           style={{
             padding: '10px',
-            background: 'blue',
+            background: 'var(--kyocera-red)', // Cambiado a tu color corporativo
             color: 'white',
             border: 'none',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            fontWeight: 'bold'
           }}
         >
           {id ? 'Guardar Cambios' : 'Crear Incidencia'}
