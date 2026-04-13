@@ -15,6 +15,9 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
     FechaLimite: '' 
   });
 
+  // Definimos el límite de caracteres aquí
+  const MAX_TITLE_LENGTH = 50;
+
   useEffect(() => {
     if (id) {
       const existing = incidents.find(inc => inc.id === parseInt(id));
@@ -40,11 +43,26 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
       <h2>{id ? 'Editar Incidencia' : 'Nueva Incidencia'}</h2>
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
         
-        {/* CAMPOS PARA NUEVA INCIDENCIA */}
+        {/* CAMPOS SOLO PARA NUEVA INCIDENCIA */}
         {!id && (
           <>
-            <label>Título:</label>
-            <input className="search-input" type="text" value={formData.title} onChange={(e) => setFormData({...formData, title: e.target.value})} required />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label>Título:</label>
+                {/* Contador de caracteres opcional */}
+                <span style={{ fontSize: '11px', color: formData.title.length >= MAX_TITLE_LENGTH ? 'red' : '#999' }}>
+                    {formData.title.length} / {MAX_TITLE_LENGTH}
+                </span>
+            </div>
+            <input 
+                className="search-input" 
+                type="text" 
+                value={formData.title} 
+                onChange={(e) => setFormData({...formData, title: e.target.value})} 
+                required 
+                maxLength={MAX_TITLE_LENGTH} // LIMITA LOS CARACTERES AQUÍ
+                placeholder="Título breve..."
+            />
+            
             <label>Fecha Límite:</label>
             <input className="search-input" type="date" value={formData.FechaLimite} onChange={(e) => setFormData({...formData, FechaLimite: e.target.value})} required />
           </>
@@ -53,15 +71,22 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
         <label>Descripción:</label>
         <textarea className="search-input" value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} required rows="4" />
 
-        {/* CAMPO DE USUARIO ASIGNADO (Añadido aquí para que funcione) */}
         <label>Usuario Asignado:</label>
         <input 
           className="search-input" 
           type="text" 
-          placeholder="Nombre del técnico..."
+          placeholder="Nombre usuario..."
           value={formData.assignedUser} 
           onChange={(e) => setFormData({...formData, assignedUser: e.target.value})} 
         />
+
+        <label>Estado:</label>
+        <select className="search-input" value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})}>
+          <option value="abierta">Abierta</option>
+          <option value="en proceso">En proceso</option>
+          <option value="resuelta">Resuelta</option>
+          <option value="cerrada">Cerrada</option>
+        </select>
 
         <label>Prioridad:</label>
         <select className="search-input" value={formData.priority} onChange={(e) => setFormData({...formData, priority: e.target.value})}>
@@ -70,19 +95,6 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
           <option value="alta">Alta</option>
           <option value="critica">Crítica</option>
         </select>
-
-        {/* CAMPOS SOLO PARA EDICIÓN */}
-        {id && (
-          <>
-            <label>Estado:</label>
-            <select className="search-input" value={formData.status} onChange={(e) => setFormData({...formData, status: e.target.value})}>
-              <option value="abierta">Abierta</option>
-              <option value="en proceso">En proceso</option>
-              <option value="resuelta">Resuelta</option>
-              <option value="cerrada">Cerrada</option>
-            </select>
-          </>
-        )}
 
         <button type="submit" className="btn-search" style={{ justifyContent: 'center' }}>
           <Save size={18}/> {id ? 'Guardar Cambios' : 'Registrar'}
