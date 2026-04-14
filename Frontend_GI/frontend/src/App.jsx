@@ -4,25 +4,21 @@ import IncidentList from './pages/IncidentList'
 import IncidentDetail from './pages/IncidentDetail'
 import IncidentForm from './pages/IncidentForm'
 import Login from './components/Login'
-import NavBar from './components/NavBar'
-import kyoImg from './assets/Kyocera_logo.svg.png'
+import Header from './components/Header' // <--- Importamos el Header nuevo
 import './App.css'
 
 function AppLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
   return (
     <div className="app-layout">
-      {sidebarOpen ? <aside className="sidebar"><NavBar /></aside> : <aside className="sidebar-mini"></aside>}
-      <div className="main-area">
-        <header className="hero">
-          <button className="toggle-btn" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
-          <img src={kyoImg} className="base" alt="Kyocera Logo" />
-          <h1>Gestión de Incidencias</h1>
-        </header>
-        <main className="main-content">
-          <div className="page-wrapper"><Outlet /></div>
-        </main>
-      </div>
+      {/* 1. El Header ahora contiene el logo y la navegación */}
+      <Header /> 
+      
+      <main className="main-content">
+        {/* 2. El Outlet renderiza las páginas (Listado, Formulario, etc.) */}
+        <div className="page-wrapper">
+          <Outlet />
+        </div>
+      </main>
     </div>
   )
 }
@@ -53,4 +49,5 @@ function App() {
     </Router>
   )
 }
+
 export default App;

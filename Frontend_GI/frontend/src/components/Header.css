@@ -1,0 +1,59 @@
+/* =========================
+   HEADER GLOBAL
+========================= */
+.header-global {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 12rem !important; 
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 90px; 
+  position: sticky;
+  top: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.header-logo {
+  height: 40px;
+  display: block;
+}
+
+.header-title {
+  font-size: 1.6rem; /* Un poco más grande */
+  font-weight: 700;
+  color: var(--kyocera-red);
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--kyocera-red);
+}
+
+.logout-btn {
+  color: #777 !important;
+  margin-left: 10px;
+  border-left: 1px solid #ddd;
+  padding-left: 20px;
+}

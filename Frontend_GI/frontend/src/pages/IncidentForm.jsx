@@ -16,7 +16,7 @@ export default function IncidentForm({ onAdd, incidents = [], setIncidents }) {
     FechaLimite: '' 
   });
 
-  const MAX_TITLE_LENGTH = 50;
+  const MAX_TITLE_LENGTH = 80;
 
   useEffect(() => {
     if (id) {

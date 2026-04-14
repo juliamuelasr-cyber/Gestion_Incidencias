@@ -1,72 +1,83 @@
 /* =========================
+   VARIABLES Y RESET
+========================= */
+:root {
+  --kyocera-red: #e5002d;
+  --bg: #f8f9fa;
+  --border: #e0e0e0;
+  --text-main: #333;
+  --text-light: #666;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg);
+  color: var(--text-main);
+}
+
+/* =========================
    LAYOUT GENERAL APP
 ========================= */
 .app-layout {
   display: flex;
+  flex-direction: column;
   min-height: 100vh;
   width: 100%;
 }
 
-.main-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-/* ELIMINADO EL FLEX QUE MONTABA LAS CARDS */
 .main-content {
   flex: 1;
-  padding: 40px 20px;
+  padding: 20px;
   width: 100%;
-  box-sizing: border-box;
-  padding-top: 20px !important;
 }
 
 .page-wrapper {
-  width: 95%;
+  width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-}
-
-/* =========================
-   HEADER (HERO)
-========================= */
-.hero {
-  text-align: center;
   padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
 }
 
-.hero .base {
-  width: 120px;
-  margin: 0 auto;
-  display: block;
+.page-title {
+  text-align: center;
+  color: var(--kyocera-red);
+  margin-bottom: 30px;
+  font-size: 2rem;
 }
 
 /* =========================
-   GRID DE INCIDENCIAS
+   GRID DE INCIDENCIAS (ANTI-SUPERPOSICIÓN)
 ========================= */
 .incident-grid {
   display: grid;
-  /* Ajustado a 380px para evitar colapsos en pantallas medianas */
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  /* Usamos un mínimo de 350px. Si no caben 3, pasará a 2 automáticamente sin montarse */
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 30px;
   width: 100%;
+  /* Importante: permite que las filas crezcan según el contenido */
+  grid-auto-rows: auto; 
 }
 
 .incident-card {
   background: white;
   border: 2px solid var(--border);
   border-radius: 12px;
-  padding: 20px;
+  padding: 30px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Para que todas midan lo mismo */
+  height: 100%; 
   box-sizing: border-box;
+  /* Evita que el contenido interno ensanche la tarjeta más de la cuenta */
+  min-width: 0; 
+  overflow: hidden;
 }
 
 .incident-card:hover {
@@ -74,27 +85,49 @@
   border-color: #d1d1d1;
 }
 
-/* TÍTULO DE LA CARD CON CLAMP SEGURO */
-.incident-card h3 {
-  margin: 15px 0;
-  font-size: 20px;
-  text-align: center;
-  min-height: 54px; /* Espacio para 2 líneas */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  word-break: break-word; /* Evita que "444444" desborde */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
-/* FILAS DE INFORMACIÓN (USER / FECHA) */
+/* Título de la incidencia (Muestra todo el texto) */
+.incident-card h3 {
+  margin: 15px 0 20px 0;
+  font-size: 22px;
+  text-align: center;
+  color: var(--text-main);
+  line-height: 1.3;
+  /* FORZAR SALTO DE LÍNEA: Crucial para evitar que la tarjeta se ensanche */
+  word-wrap: break-word;
+  overflow-wrap: anywhere; 
+  word-break: break-word;
+}
+
+/* Estado y Prioridad grandes */
+.status-badge, .priority-badge {
+  font-weight: bold;
+  text-decoration: underline;
+  font-size: 18px !important;
+  letter-spacing: 0.5px;
+}
+
+/* PIE DE TARJETA: Bloque que se alinea al fondo */
+.card-footer-content {
+  margin-top: auto; /* Empuja el bloque al fondo de la card */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* FILAS DE INFORMACIÓN */
 .info-row {
-  font-size: 15px;
-  margin-bottom: 15px;
+  font-size: 1rem;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 20px;
+  gap: 10px;
+  padding: 10px 15px;
   border-radius: 50px;
 }
 
@@ -106,91 +139,72 @@
   display: flex;
   gap: 10px;
   justify-content: center;
-  margin-top: auto; /* Empuja al fondo */
   padding-top: 15px;
+  margin-top: 10px;
+  border-top: 1px solid #eee;
 }
 
-/* =========================
-   BOTONES Y BUSCADOR
-========================= */
 .btn {
-  width: 100px;
-  height: 38px;
+  padding: 10px 15px;
   border-radius: 8px;
   font-size: 13px;
   border: none;
   cursor: pointer;
   font-weight: bold;
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   transition: opacity 0.2s;
-  text-decoration: none;
 }
 
 .btn:hover { opacity: 0.85; }
-.btn-danger { background: #e74c3c; color: white; }
-.btn-edit { background: #cce7fa; color: #004a7c; }
-.btn-detail { background: #f2dbfc; color: #5a189a; }
+.btn-danger { background: #ffeded; color: #e74c3c; border: 1px solid #ffcfcf; }
+.btn-edit { background: #eaf3fa; color: #004a7c; border: 1px solid #cce7fa; }
+.btn-detail { background: #f6ebff; color: #5a189a; border: 1px solid #f2dbfc; }
 
+/* =========================
+   BUSCADOR Y FORMULARIOS
+========================= */
 .search-form {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 40px;
-  width: 100%;
+  justify-content: center;
+  align-items: center;
 }
 
 .search-input {
-  padding: 12px 16px;
+  padding: 12px 15px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 1rem;
   outline: none;
-  background: white;
-  font-family: inherit; /* Arregla la letra */
+  background-color: white;
+  transition: border-color 0.2s;
 }
 
-.search-input:focus { border-color: var(--kyocera-red); }
+.search-input:focus {
+  border-color: var(--kyocera-red);
+}
+
+.flex-1 { flex: 1; max-width: 200px; }
+.flex-2 { flex: 2; max-width: 400px; }
 
 .btn-search {
   background: var(--kyocera-red);
   color: white;
-  padding: 0 25px;
+  height: 48px;
+  padding: 0 30px;
   border-radius: 8px;
   border: none;
   font-weight: bold;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 /* =========================
-   SIDEBAR
-========================= */
-.sidebar {
-  width: 240px;
-  background-color: var(--bg-sidebar);
-  border-right: 1px solid var(--border);
-}
-
-.toggle-btn {
-  position: absolute;
-  left: 25px;
-  top: 25px;
-  background: var(--kyocera-red);
-  color: white;
-  font-size: 15px;
-  padding: 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  z-index: 100;
-}
-
-/* =========================
-   LOGIN
+   LOGIN PAGE
 ========================= */
 .login-page {
   min-height: 100vh;
@@ -198,7 +212,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #f8f9fa;
+  background: var(--bg);
 }
 
 .login-container {
@@ -208,4 +222,27 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 400px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form input {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.login-form button {
+  padding: 12px;
+  background: var(--kyocera-red);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }

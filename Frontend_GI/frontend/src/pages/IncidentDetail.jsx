@@ -33,7 +33,7 @@ export default function IncidentDetail({ incidents, setIncidents }) {
 
   return (
     <div className="detail-container">
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Detalle Incidencias</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '2rem' }}>Detalle Incidencias</h2>
       <div className="detail-card">
         
         {/* TÍTULO PRINCIPAL */}
@@ -64,17 +64,17 @@ export default function IncidentDetail({ incidents, setIncidents }) {
             display: 'flex', 
             alignItems: 'center', 
             gap: '10px', 
-            fontSize: '16px', 
+            fontSize: '20px', 
             color: '#333',
             marginBottom: '15px',
             borderBottom: '2px solid #eee',
             paddingBottom: '8px'
           }}>
-            <FileText size={18} color='#d477fb' /><strong> Descripción Incidencia</strong>
+            <FileText size={20} color='#d477fb' /><strong> Descripción Incidencia</strong>
           </h3>
           <p className="description-text" style={{ 
             background: '#f9f9f9', 
-            padding: '20px', 
+            padding: '18px', 
             borderRadius: '10px', 
             border: '1px solid #eee',
             lineHeight: '1.6',
@@ -85,22 +85,22 @@ export default function IncidentDetail({ incidents, setIncidents }) {
         </div>
         
         <div className="assigned-user" style={{ marginBottom: '20px' }}>
-          <User2 size={18} color='#6582f7' /> <strong>Usuario asignado:</strong> {incident.assignedUser || 'Pendiente'}
+          <User2 size={20} color='#6582f7' /> <strong>Usuario asignado:</strong> {incident.assignedUser || 'Pendiente'}
         </div>
 
         <div className="dates-grid">
           <div className="date-item">
-            <CalendarClock size={14} /> <strong>Creada:</strong> {incident.FechaCreacion}
+            <CalendarClock size={20} /> <strong>Creada:</strong> {incident.FechaCreacion}
           </div>
           <div className="date-item">
-            <History size={14} /> <strong>Actualizada:</strong> {incident.FechaActualizacion}
+            <History size={20} /> <strong>Actualizada:</strong> {incident.FechaActualizacion}
           </div>
         </div>
 
         <hr className="detail-hr" />
         
         <h4 className="comments-title">
-          <MessageSquareText size={18} color="var(--kyocera-red)" /> Seguimiento
+          <MessageSquareText size={20} color="var(--kyocera-red)" /> Seguimiento
         </h4>
 
         <div className="comments-history">

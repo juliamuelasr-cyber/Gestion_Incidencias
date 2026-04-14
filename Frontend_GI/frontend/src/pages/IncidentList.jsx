@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Eye, Edit3, Trash2, User, Calendar } from 'lucide-react';
 import Swal from 'sweetalert2';
-import './IncidentList.css'; // Importamos el nuevo archivo CSS
 
 export default function IncidentList({ incidents, setIncidents }) {
   const [tempSearch, setTempSearch] = useState('');
@@ -20,7 +19,7 @@ export default function IncidentList({ incidents, setIncidents }) {
       title: '¿Borrar incidencia?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: 'var(--kyocera-red)',
+      confirmButtonColor: '#e5002d',
       confirmButtonText: 'Sí, eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
@@ -51,32 +50,22 @@ export default function IncidentList({ incidents, setIncidents }) {
           value={tempSearch} 
           onChange={(e) => setTempSearch(e.target.value)} 
         />
-        <select 
-          className="search-input flex-1" 
-          value={tempStatus} 
-          onChange={(e) => setTempStatus(e.target.value)}
-        >
+        <select className="search-input flex-1" value={tempStatus} onChange={(e) => setTempStatus(e.target.value)}>
           <option value="">Estados</option>
           <option value="abierta">Abierta</option>
           <option value="en proceso">En proceso</option>
           <option value="resuelta">Resuelta</option>
           <option value="cerrada">Cerrada</option>
         </select>
-
-        <select 
-          className="search-input flex-1" 
-          value={tempPriority} 
-          onChange={(e) => setTempPriority(e.target.value)}
-        >
+        <select className="search-input flex-1" value={tempPriority} onChange={(e) => setTempPriority(e.target.value)}>
           <option value="">Prioridades</option>
           <option value="baja">Baja</option>
           <option value="media">Media</option>
           <option value="alta">Alta</option>
           <option value="critica">Crítica</option>
         </select>
-
         <button type="submit" className="btn-search">
-          <Search size={18}/> Buscar
+          <Search size={18}/> BUSCAR
         </button>
       </form>
 
@@ -96,23 +85,26 @@ export default function IncidentList({ incidents, setIncidents }) {
               {incident.title}
             </h3>
             
-            <p className="info-row assigned-row">
-              <User size={20}/> <span>Asignado a: {incident.assignedUser || 'Sin asignar'}</span>
-            </p>
-            <p className="info-row date-row">
-              <Calendar size={20}/> <span>Fecha creación: {incident.FechaCreacion}</span>
-            </p>
-            
-            <div className="card-actions">
-              <Link className="btn btn-detail" to={`/incidencia/${incident.id}`}>
-                <Eye size={18}/> Detalle
-              </Link>
-              <Link className="btn btn-edit" to={`/editar/${incident.id}`}>
-                <Edit3 size={18}/> Editar
-              </Link>
-              <button className="btn btn-danger" onClick={() => handleDelete(incident.id)}>
-                <Trash2 size={18}/> Borrar
-              </button>
+            {/* Contenedor que se alinea al fondo de la card */}
+            <div className="card-footer-content">
+              <p className="info-row assigned-row">
+                <User size={20}/> <span>Asignado a: {incident.assignedUser || 'Sin asignar'}</span>
+              </p>
+              <p className="info-row date-row">
+                <Calendar size={20}/> <span>Fecha creación: {incident.FechaCreacion}</span>
+              </p>
+              
+              <div className="card-actions">
+                <Link className="btn btn-detail" to={`/incidencia/${incident.id}`}>
+                  <Eye size={18}/> Detalle
+                </Link>
+                <Link className="btn btn-edit" to={`/editar/${incident.id}`}>
+                  <Edit3 size={18}/> Editar
+                </Link>
+                <button className="btn btn-danger" onClick={() => handleDelete(incident.id)}>
+                  <Trash2 size={18}/> Borrar
+                </button>
+              </div>
             </div>
           </div>
         ))}
