@@ -1,5 +1,5 @@
 // api-config.js
-const API_BASE_URL = 'https://delighted-pamperer-mutilated.ngrok-free.dev'; // Puerto definido en launchSettings.json
+const API_BASE_URL = 'http://localhost:5150/api'; // Puerto definido en launchSettings.json
 
 export const authHeader = () => {
     const token = localStorage.getItem('token');
