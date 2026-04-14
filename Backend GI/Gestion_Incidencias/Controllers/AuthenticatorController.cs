@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
     private string GenerateToken(string usuario)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes("mi_clave_secreta_1234567890");
+        var key = Encoding.UTF8.GetBytes("clave_super_secreta");
 
         var claims = new[]
         {
