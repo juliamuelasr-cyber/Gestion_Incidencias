@@ -46,7 +46,20 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//Autorizacion
 builder.Services.AddAuthorization();
+
+//Configuracion CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5150") // URL de tu frontend
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -62,6 +75,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Después de app.UseHttpsRedirection()
+app.UseCors("AllowFrontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
