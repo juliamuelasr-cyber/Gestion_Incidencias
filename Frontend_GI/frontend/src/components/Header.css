@@ -1,0 +1,131 @@
+/* =========================
+   HEADER GLOBAL
+========================= */
+.header-global {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 12rem !important; 
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 90px; 
+  position: sticky;
+  top: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.header-logo {
+  height: 40px;
+  display: block;
+}
+
+.header-title {
+  font-size: 1.6rem; /* Un poco más grande */
+  font-weight: 700;
+  color: var(--kyocera-red);
+  margin: 0;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+  color: var(--kyocera-red);
+}
+
+.logout-btn {
+  color: #777 !important;
+  margin-left: 10px;
+  border-left: 1px solid #ddd;
+  padding-left: 20px;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+/* Tablets y pantallas medianas (menos de 1024px) */
+@media (max-width: 1024px) {
+  .header-global {
+    /* Reducimos el margen lateral de 12rem a algo más razonable */
+    padding: 1.5rem 4rem !important;
+  }
+  
+  .header-left {
+    gap: 20px; /* Reducimos espacio entre logo y título */
+  }
+
+  .header-title {
+    font-size: 1.3rem;
+  }
+}
+
+/* Móviles grandes (menos de 768px) */
+@media (max-width: 768px) {
+  .header-global {
+    flex-direction: column; /* Apilamos logo/título arriba y menú abajo */
+    padding: 1rem 2rem !important;
+    gap: 15px;
+    height: auto;
+  }
+
+  .header-left {
+    justify-content: center;
+    width: 100%;
+    gap: 15px;
+  }
+
+  .header-logo {
+    height: 30px; /* Logo un poco más pequeño */
+  }
+
+  .header-title {
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  .nav-links {
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+  }
+}
+
+/* Móviles pequeños (menos de 480px) */
+@media (max-width: 480px) {
+  .header-global {
+    padding: 1rem !important;
+  }
+
+  .header-title {
+    display: none; /* Opcional: Ocultamos el texto en móviles muy pequeños para que solo quede el logo */
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+}
