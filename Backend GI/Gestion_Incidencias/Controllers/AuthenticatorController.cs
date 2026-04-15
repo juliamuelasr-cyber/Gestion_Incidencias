@@ -1,62 +1,62 @@
-﻿using System;
+﻿using Kyocera.Microservice.Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Kyocera.Microservice.Models;
+
+using AuthSvc = Kyocera.Microservice.Application.Services.IAuthorizationService;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    private readonly AuthSvc _authService;
+
+    public AuthController(AuthSvc authService)
+    {
+        _authService = authService;
+    }
+
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
- 
-        if (request.Usuario == "admin.kyocera" && request.Password == "1234")
+        try
         {
-            var token = GenerateToken(request.Usuario);
+            if (request == null)
+                return BadRequest("El cuerpo de la petición no puede estar vacío");
+
+            var token = _authService.Authenticate(request.Usuario, request.Password);
+
+            if (token == null)
+                return Unauthorized(new { message = "Credenciales incorrectas" });
+
             return Ok(new { token });
         }
-
-        return Unauthorized();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en Login: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            return StatusCode(500, new { message = "Error interno en login", detail = ex.Message });
+        }
     }
 
     [HttpPost("register")]
     public IActionResult Register([FromBody] LoginRequest request)
     {
-       
-        if (request.Usuario == "admin.kyocera")
-            return BadRequest("El usuario ya existe");
-
-        return Ok("Usuario registrado correctamente");
-    }
-
-    
-
-
-
-    private string GenerateToken(string usuario)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes("clave_super_secreta");
-
-        var claims = new[]
+        try
         {
-            new Claim(ClaimTypes.Name, usuario),
-            new Claim(ClaimTypes.Role, "Administrator")
-        };
+            if (request == null)
+                return BadRequest("El cuerpo de la petición no puede estar vacío");
 
-        var tokenDescriptor = new SecurityTokenDescriptor
+            var success = _authService.Register(request.Usuario, request.Password);
+
+            if (!success)
+                return BadRequest(new { message = "El usuario ya existe" });
+
+            return Ok(new { message = "Usuario registrado correctamente" });
+        }
+        catch (Exception ex)
         {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-        };
-
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+            Console.WriteLine($"Error en Register: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            return StatusCode(500, new { message = "Error interno en register", detail = ex.Message });
+        }
     }
-
 }

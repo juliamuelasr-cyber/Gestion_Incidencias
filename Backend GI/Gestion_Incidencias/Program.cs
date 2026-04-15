@@ -25,7 +25,7 @@ builder.Services.AddScoped<AuthSvc, AuthService>();
 builder.Services.AddScoped<IIncidenciasService, IncidenciasService>();
 
 //4. Configuracion token 
-var key = Encoding.UTF8.GetBytes("clave_super_secreta");
+var key = Encoding.UTF8.GetBytes("clave_super_secreta_256Bits!_OK12");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -52,7 +52,7 @@ builder.Services.AddAuthorization();
 //Configuracion CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("NgrokPolicy", policy =>
+    options.AddPolicy("AllowReact", policy =>
     {
         policy.AllowAnyOrigin() // O pon tu URL de ngrok específica
               .AllowAnyHeader()
@@ -77,7 +77,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Después de app.UseHttpsRedirection()
-app.UseCors("NgrokPolicy");
+app.UseCors("AllowReact");
 
 app.UseAuthentication();
 app.UseAuthorization();

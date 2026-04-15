@@ -7,39 +7,65 @@ namespace Kyocera.Microservice.Application.Services
 {
     public class AuthService : IAuthorizationService
     {
+        private const string SecretKey = "clave_super_secreta_256Bits!_OK12";
+        private const string Issuer = "tuApp";
+        private const string Audience = "tuApp";
+
         public string? Authenticate(string usuario, string password)
         {
-            if (usuario == "admin.kyocera" && password == "1234")
+            try
             {
-                return GenerateToken(usuario);
+                // Usuario hardcodeado
+                if (usuario == "admin.kyocera" && password == "1234")
+                    return GenerateToken(usuario);
+
+                // Usuarios registrados en memoria
+                if (InMemoryUsers.Users.TryGetValue(usuario, out var storedPassword)
+                    && storedPassword == password)
+                    return GenerateToken(usuario);
+
+                return null;
             }
-            return null;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en Authenticate: {ex.Message}");
+                throw; // lo relanza para que el controller lo capture
+            }
         }
 
         public bool Register(string usuario, string password)
         {
-            // Revisar si el usuario existe en esta memoria , si existiera no se podría registrar
-            if (InMemoryUsers.Users.ContainsKey(usuario))
-                return false;
+            try
+            {
+                if (InMemoryUsers.Users.ContainsKey(usuario))
+                    return false;
 
-            InMemoryUsers.Users.TryAdd(usuario, password);
-            return true;
+                InMemoryUsers.Users.TryAdd(usuario, password);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en Register: {ex.Message}");
+                throw;
+            }
         }
+
         private string GenerateToken(string usuario)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("clave_super_secreta"));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-            new Claim(ClaimTypes.Name, usuario)
-        };
+                new Claim(ClaimTypes.Name, usuario),
+                new Claim(ClaimTypes.Role, "Administrator")
+            };
 
             var token = new JwtSecurityToken(
-                issuer: "tuApp",
-                audience: "tuApp",
+                issuer: Issuer,
+                audience: Audience,
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(1), // UtcNow en vez de Now
                 signingCredentials: creds
             );
 
@@ -47,7 +73,7 @@ namespace Kyocera.Microservice.Application.Services
         }
     }
 
-    internal static class InMemoryUsers // Clase para almacenar los usuarios registrados en la memoria en vez de en una BD real. O "diccionario en memoria"
+    internal static class InMemoryUsers
     {
         public static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> Users =
             new System.Collections.Concurrent.ConcurrentDictionary<string, string>();
