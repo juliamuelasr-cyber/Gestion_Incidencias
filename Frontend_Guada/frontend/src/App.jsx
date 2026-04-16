@@ -4,6 +4,7 @@ import IncidentList from './pages/IncidentList'
 import IncidentForm from './pages/IncidentForm'
 import IncidentDetail from './pages/IncidentDetail'
 import Login from './components/Login'
+import Header from './components/Header'
 import { API_BASE_URL, authHeader } from './services/api-config'
 import './App.css'
 
@@ -49,8 +50,8 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-        {/* Solo mostramos la NavBar si el usuario está logueado */}
-        {token && <NavBar onLogout={handleLogout} />}
+        {/* Solo mostramos la Header si el usuario está logueado */}
+        {token && <Header onLogout={handleLogout} />}
         
         <main className="main-content">
           <Routes>

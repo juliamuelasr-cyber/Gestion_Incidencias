@@ -16,7 +16,7 @@ export default function Header() {
 
       <nav className="nav-links">
         <Link to="/">Ver Incidencias</Link>
-        <Link to="/crear">Nueva Incidencia</Link>
+        <Link to="/nueva">Nueva Incidencia</Link>
         <Link to="/login" className="logout-icon-btn" title="Cerrar Sesión">
           <LogOut size={24} />
         </Link>
