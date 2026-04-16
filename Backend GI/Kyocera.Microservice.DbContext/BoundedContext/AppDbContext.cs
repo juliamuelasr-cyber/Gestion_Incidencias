@@ -1,12 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Kyocera.Microservice.Models.Models;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Kyocera.Microservice.DbContext.BoundedContext
 {
-    public class AppDbContext : Microsoft.EntityFrameworkCore.DbContext
+    public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
-        public AppDbContext(Microsoft.EntityFrameworkCore.DbContextOptions<AppDbContext> options) : base(options) { }
+        public AppDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-        public DbSet<Incidencia> Incidencias { get; set; }
+            optionsBuilder.UseSqlServer(
+                "TU_CONNECTION_STRING_AQUI"
+            );
+
+            return new AppDbContext(optionsBuilder.Options);
+        }
     }
 }

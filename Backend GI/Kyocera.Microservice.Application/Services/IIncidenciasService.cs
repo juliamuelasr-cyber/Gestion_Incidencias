@@ -1,4 +1,4 @@
-﻿using Kyocera.Microservice.Models.Models;
+﻿using Kyocera.Microservice.Models.Models.Entities;
 
 namespace Kyocera.Microservice.Application.Interfaces
 {

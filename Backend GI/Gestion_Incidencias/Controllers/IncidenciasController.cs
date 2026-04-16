@@ -1,5 +1,7 @@
 using Kyocera.Microservice.DbContext.Repository;
-using Kyocera.Microservice.Models.Models;
+using Kyocera.Microservice.Models.Models.Entities;
+using Kyocera.Microservice.Models.Models.Enums;
+using Kyocera.Microservice.Models.Models.Filters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;

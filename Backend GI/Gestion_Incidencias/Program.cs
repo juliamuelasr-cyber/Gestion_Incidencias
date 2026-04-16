@@ -19,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // 2. Repositorios y Servicios
 builder.Services.AddScoped<IIncidenciasRepository, IncidenciasRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<AuthSvc, AuthService>();
 builder.Services.AddScoped<IIncidenciasService, IncidenciasService>();
 

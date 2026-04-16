@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Kyocera.Microservice.Application.Interfaces;
 using Kyocera.Microservice.DbContext.Repository;
-using Kyocera.Microservice.Models.Models;
+using Kyocera.Microservice.Models.Models.Entities;
 
 namespace Kyocera.Microservice.Application.Services
 {

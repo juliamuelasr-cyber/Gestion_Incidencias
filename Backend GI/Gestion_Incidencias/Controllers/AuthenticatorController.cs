@@ -1,23 +1,21 @@
 ﻿using Kyocera.Microservice.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
-using AuthSvc = Kyocera.Microservice.Application.Services.IAuthorizationService;
-
-[ApiController]
-[Route("api/[controller]")]
-public class AuthController : ControllerBase
+namespace Kyocera.Microservice.WebAPI.Controllers
 {
-    private readonly AuthSvc _authService;
-
-    public AuthController(AuthSvc authService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
-        _authService = authService;
-    }
+        private readonly IAuthorizationService _authService;
 
-    [HttpPost("login")]
-    public IActionResult Login([FromBody] LoginRequest request)
-    {
-        try
+        public AuthController(IAuthorizationService authService)
+        {
+            _authService = authService;
+        }
+
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginRequest request)
         {
             if (request == null)
                 return BadRequest("El cuerpo de la petición no puede estar vacío");
@@ -29,18 +27,9 @@ public class AuthController : ControllerBase
 
             return Ok(new { token });
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error en Login: {ex.Message}");
-            Console.WriteLine($"StackTrace: {ex.StackTrace}");
-            return StatusCode(500, new { message = "Error interno en login", detail = ex.Message });
-        }
-    }
 
-    [HttpPost("register")]
-    public IActionResult Register([FromBody] LoginRequest request)
-    {
-        try
+        [HttpPost("register")]
+        public IActionResult Register([FromBody] LoginRequest request)
         {
             if (request == null)
                 return BadRequest("El cuerpo de la petición no puede estar vacío");
@@ -51,12 +40,6 @@ public class AuthController : ControllerBase
                 return BadRequest(new { message = "El usuario ya existe" });
 
             return Ok(new { message = "Usuario registrado correctamente" });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error en Register: {ex.Message}");
-            Console.WriteLine($"StackTrace: {ex.StackTrace}");
-            return StatusCode(500, new { message = "Error interno en register", detail = ex.Message });
         }
     }
 }
