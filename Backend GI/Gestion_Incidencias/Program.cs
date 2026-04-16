@@ -106,4 +106,8 @@ app.UseAuthentication(); // 1º Autenticación
 app.UseAuthorization();  // 2º Autorización
 
 app.MapControllers();
+
+// 6. CORS
+app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
 app.Run();
