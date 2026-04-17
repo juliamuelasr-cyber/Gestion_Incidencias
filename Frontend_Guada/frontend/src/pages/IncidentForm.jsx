@@ -11,6 +11,7 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
   
   // CORRECCIÓN: Nombres en PascalCase para coincidir con ModelsIncidencia.cs
   const [formData, setFormData] = useState({ 
+    Id: 0,
     Titulo: '', 
     Descripcion: '', 
     Estado: 0, // 0 = Abierta (según Estado.cs)
@@ -27,16 +28,17 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
 
   useEffect(() => {
     if (id) {
-      // Buscar por 'Id' en PascalCase
-      const existing = incidents.find(inc => inc.Id === parseInt(id));
+      // Buscar por 'id' en minúscula (como devuelve el backend)
+      const existing = incidents.find(inc => inc.id === parseInt(id));
       if (existing) {
         setFormData({
-          Titulo: existing.Titulo || '',
-          Descripcion: existing.Descripcion || '',
-          Estado: existing.Estado || 0,
-          Prioridad: existing.Prioridad || 0,
-          UsuarioAsignado: existing.UsuarioAsignado || '',
-          FechaLimite: existing.FechaLimite ? existing.FechaLimite.split('T')[0] : ''
+          Titulo: existing.titulo || '',
+          Descripcion: existing.descripcion || '',
+          Estado: existing.estado || 0,
+          Prioridad: existing.prioridad || 0,
+          UsuarioAsignado: existing.usuarioAsignado || '',
+          FechaLimite: existing.fechaLimite ? existing.fechaLimite.split('T')[0] : '',
+          Id: existing.id // Agregar el ID para UPDATE
         });
       }
     }
@@ -74,7 +76,7 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
       Prioridad: parseInt(formData.Prioridad),
       UsuarioAsignado: formData.UsuarioAsignado?.trim() || null,
       FechaLimite: formData.FechaLimite || null, // Enviar null si está vacío, no string vacía
-      Id: id ? parseInt(id) : 0
+      Id: formData.Id || 0
     };
 
     try {

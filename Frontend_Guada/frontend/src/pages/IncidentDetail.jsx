@@ -8,12 +8,12 @@ export default function IncidentDetail({ incidents, setIncidents }) {
   const { id } = useParams();
   const [newComment, setNewComment] = useState('');
   
-  // 1. Buscamos la incidencia
-  const incident = incidents.find(inc => inc.Id === parseInt(id));
+  // 1. Buscamos la incidencia (usar 'id' en minúscula)
+  const incident = incidents.find(inc => inc.id === parseInt(id));
 
   // 2. LÓGICA DE PARSEO: Convertimos el String del Back en un Array para el Front
-  // Si ya existe 'comments' como array lo usamos, si no, intentamos parsear 'ComentariosJson'
-  const listaComentarios = incident?.comments || (incident?.ComentariosJson ? JSON.parse(incident.ComentariosJson) : []);
+  // Si ya existe 'comments' como array lo usamos, si no, intentamos parsear 'comentariosJson'
+  const listaComentarios = incident?.comments || (incident?.comentariosJson ? JSON.parse(incident.comentariosJson) : []);
 
   const estadoMap = { 0: 'Abierta', 1: 'EnProgreso', 2: 'Resuelta', 3: 'Cerrada' };
   const prioridadMap = { 0: 'Baja', 1: 'Media', 2: 'Alta', 3: 'Crítica' };
@@ -39,18 +39,25 @@ export default function IncidentDetail({ incidents, setIncidents }) {
     const nuevoComentarioObj = { text: newComment, date: new Date().toLocaleString('es-ES') };
     const nuevaListaComentarios = [...listaComentarios, nuevoComentarioObj];
 
-    // Preparamos el objeto para el Backend (con el JSON serializado)
+    // Preparamos el objeto para el Backend (con PascalCase como espera el back)
     const incidentActualizado = { 
-      ...incident, 
-      ComentariosJson: JSON.stringify(nuevaListaComentarios) // Lo enviamos como texto al Back
+      Id: incident.id,
+      Titulo: incident.titulo,
+      Descripcion: incident.descripcion,
+      Estado: incident.estado,
+      Prioridad: incident.prioridad,
+      FechaCreacion: incident.fechaCreacion,
+      FechaLimite: incident.fechaLimite,
+      UsuarioAsignado: incident.usuarioAsignado,
+      ComentariosJson: JSON.stringify(nuevaListaComentarios) // PascalCase para el backend
     };
 
     try {
-      await updateIncidencia(incident.Id, incidentActualizado);
+      await updateIncidencia(incident.id, incidentActualizado);
       
       // Actualizamos el estado global para que se vea al instante
       const updated = incidents.map(inc => 
-        inc.Id === incident.Id ? { ...inc, comments: nuevaListaComentarios, ComentariosJson: incidentActualizado.ComentariosJson } : inc
+        inc.id === incident.id ? { ...inc, comments: nuevaListaComentarios, comentariosJson: JSON.stringify(nuevaListaComentarios) } : inc
       );
       setIncidents(updated);
       setNewComment('');
@@ -66,22 +73,22 @@ export default function IncidentDetail({ incidents, setIncidents }) {
       <h2 style={{ textAlign: 'center', marginBottom: '20px', fontSize: '2rem' }}>Detalle Incidencias</h2>
       <div className="detail-card">
         <div className="detail-header">
-          <h2>{incident.Titulo}</h2>
+          <h2>{incident.titulo}</h2>
           <div className="limit-date">
-            <ShieldAlert size={16} /> Límite: {formatLimitDate(incident.FechaLimite)}
+            <ShieldAlert size={16} /> Límite: {formatLimitDate(incident.fechaLimite)}
           </div>
         </div>
 
         <div className="tags-row">
           <div className="tag-item">
-            <Info size={16} color={getStatusColor(getStatusLabel(incident.Estado))} />
+            <Info size={16} color={getStatusColor(getStatusLabel(incident.estado))} />
             <strong>Estado:</strong> 
-            <span style={{ color: getStatusColor(getStatusLabel(incident.Estado)) }}>{getStatusLabel(incident.Estado).toUpperCase()}</span>
+            <span style={{ color: getStatusColor(getStatusLabel(incident.estado)) }}>{getStatusLabel(incident.estado).toUpperCase()}</span>
           </div>
           <div className="tag-item">
-            <Tag size={16} color={getPriorityColor(getPriorityLabel(incident.Prioridad))} />
+            <Tag size={16} color={getPriorityColor(getPriorityLabel(incident.prioridad))} />
             <strong>Prioridad:</strong> 
-            <span style={{ color: getPriorityColor(getPriorityLabel(incident.Prioridad)) }}>{getPriorityLabel(incident.Prioridad).toUpperCase()}</span>
+            <span style={{ color: getPriorityColor(getPriorityLabel(incident.prioridad)) }}>{getPriorityLabel(incident.prioridad).toUpperCase()}</span>
           </div>
         </div>
 
@@ -90,17 +97,17 @@ export default function IncidentDetail({ incidents, setIncidents }) {
             <FileText size={20} color='#d477fb' /><strong> Descripción Incidencia</strong>
           </h3>
           <p className="description-text" style={{ background: '#f9f9f9', padding: '18px', borderRadius: '10px', border: '1px solid #eee', lineHeight: '1.6', color: '#444' }}>
-            {incident.Descripcion}
+            {incident.descripcion}
           </p>
         </div>
         
         <div className="assigned-user" style={{ marginBottom: '20px' }}>
-          <User2 size={20} color='#6582f7' /> <strong>Usuario asignado:</strong> {incident.UsuarioAsignado || 'Pendiente'}
+          <User2 size={20} color='#6582f7' /> <strong>Usuario asignado:</strong> {incident.usuarioAsignado || 'Pendiente'}
         </div>
 
         <div className="dates-grid">
           <div className="date-item">
-            <CalendarClock size={20} /> <strong>Creada:</strong> {new Date(incident.FechaCreacion).toLocaleDateString('es-ES')}
+            <CalendarClock size={20} /> <strong>Creada:</strong> {new Date(incident.fechaCreacion).toLocaleDateString('es-ES')}
           </div>
         </div>
 

@@ -33,26 +33,26 @@ export default function IncidentList({ incidents, setIncidents }) {
       confirmButtonText: 'Sí, eliminar'
     }).then((result) => {
       if (result.isConfirmed) {
-        // CORRECCIÓN: Usar 'Id' en mayúscula para coincidir con el Back
-        setIncidents(incidents.filter(inc => inc.Id !== id));
+        // Usar 'id' en minúscula para coincidir con el backend
+        setIncidents(incidents.filter(inc => inc.id !== id));
         Swal.fire('Eliminado', '', 'success');
       }
     });
   };
 
   const filteredIncidents = incidents.filter(inc => {
-    // Convertir enums a strings para comparar
-    const incidenciaEstado = getStatusLabel(inc.Estado);
-    const incidenciaPrioridad = getPriorityLabel(inc.Prioridad);
+    // Convertir enums a strings para comparar (usar camelCase como devuelve el backend)
+    const incidenciaEstado = getStatusLabel(inc.estado);
+    const incidenciaPrioridad = getPriorityLabel(inc.prioridad);
     
-    const matchesSearch = inc.Titulo?.toLowerCase().includes(activeFilters.search.toLowerCase());
-    const matchesStatus = activeFilters.status === '' || incidenciaEstado === activeFilters.status;
-    const matchesPriority = activeFilters.priority === '' || incidenciaPrioridad === activeFilters.priority;
+    const matchesSearch = !activeFilters.search || inc.titulo?.toLowerCase().includes(activeFilters.search.toLowerCase());
+    const matchesStatus = !activeFilters.status || incidenciaEstado === activeFilters.status;
+    const matchesPriority = !activeFilters.priority || incidenciaPrioridad === activeFilters.priority;
     
     const matches = matchesSearch && matchesStatus && matchesPriority;
-    console.log('Incidencia:', inc.Titulo, '| Estado:', inc.Estado, '(', incidenciaEstado, ') | Matches:', matches);
+    console.log('Incidencia:', inc.titulo, '| Estado:', inc.estado, '(', incidenciaEstado, ') | Matches:', matches);
     
-    return inc;
+    return matches;
   });
 
   console.log('Filtered incidents:', filteredIncidents.length);
@@ -105,39 +105,39 @@ export default function IncidentList({ incidents, setIncidents }) {
 
       <div className="incident-grid">
         {filteredIncidents.map(incident => (
-          <div key={incident.Id} className="incident-card">
+          <div key={incident.id} className="incident-card">
             <div className="card-header">
               {/* Convertir enums a strings usando mapeos */}
-              <span style={{ color: getStatusColor(getStatusLabel(incident.Estado)) }} className="status-badge">
-                {getStatusLabel(incident.Estado).toUpperCase()}
+              <span style={{ color: getStatusColor(getStatusLabel(incident.estado)) }} className="status-badge">
+                {getStatusLabel(incident.estado).toUpperCase()}
               </span>
-              <span style={{ color: getPriorityColor(getPriorityLabel(incident.Prioridad)) }} className="priority-badge">
-                {getPriorityLabel(incident.Prioridad).toUpperCase()}
+              <span style={{ color: getPriorityColor(getPriorityLabel(incident.prioridad)) }} className="priority-badge">
+                {getPriorityLabel(incident.prioridad).toUpperCase()}
               </span>
             </div>
             
             <h3 className="card-title">
-              {incident.Titulo}
+              {incident.titulo}
             </h3>
             
             <div className="card-footer-content">
               <p className="info-row assigned-row">
                 <User size={20}/> 
-                <span>Asignado a: {incident.UsuarioAsignado || 'Sin asignar'}</span>
+                <span>Asignado a: {incident.usuarioAsignado || 'Sin asignar'}</span>
               </p>
               <p className="info-row date-row">
                 <Calendar size={20}/> 
-                <span>Fecha creación: {new Date(incident.FechaCreacion).toLocaleDateString()}</span>
+                <span>Fecha creación: {new Date(incident.fechaCreacion).toLocaleDateString()}</span>
               </p>
               
               <div className="card-actions">
-                <Link className="btn btn-detail" to={`/incidencia/${incident.Id}`}>
+                <Link className="btn btn-detail" to={`/incidencia/${incident.id}`}>
                   <Eye size={18}/> Detalle
                 </Link>
-                <Link className="btn btn-edit" to={`/editar/${incident.Id}`}>
+                <Link className="btn btn-edit" to={`/editar/${incident.id}`}>
                   <Edit3 size={18}/> Editar
                 </Link>
-                <button className="btn btn-danger" onClick={() => handleDelete(incident.Id)}>
+                <button className="btn btn-danger" onClick={() => handleDelete(incident.id)}>
                   <Trash2 size={18}/> Borrar
                 </button>
               </div>
