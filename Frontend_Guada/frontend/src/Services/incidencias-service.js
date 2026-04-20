@@ -52,6 +52,15 @@ export const updateIncidencia = async (id, incidencia) => {
     throw new Error(errorMessage);
 };
 
+export const getUsuarios = async () => {
+    const response = await fetch(`${API_BASE_URL}/Usuarios`, {
+        headers: { ...authHeader() }
+    });
+
+    if (response.status === 401) throw new Error('Sesión expirada');
+    return await response.json();
+};
+
 export const deleteIncidencia = async (id) => {
     await fetch(`${API_BASE_URL}/Incidencias/${id}`, {
         method: 'DELETE',

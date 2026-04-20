@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Kyocera.Microservice.DbContext.BoundedContext;
 using Kyocera.Microservice.Models.Models;
 
@@ -10,6 +12,11 @@ namespace Kyocera.Microservice.DbContext.Repository
         public UsuariosRepository(AppDbContext context)
         {
             _context = context;
+        }
+
+        public IEnumerable<Usuario> GetAll()
+        {
+            return _context.Usuarios.ToList();
         }
 
         public Usuario? GetByEmail(string email)

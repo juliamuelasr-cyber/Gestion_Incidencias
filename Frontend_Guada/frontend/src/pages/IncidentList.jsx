@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Eye, Edit3, Trash2, User, Calendar } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { deleteIncidencia } from '../services/incidencias-service';
+import { deleteIncidencia, getUsuarios } from '../services/incidencias-service';
 
 export default function IncidentList({ incidents, setIncidents }) {
   const [tempSearch, setTempSearch] = useState('');
   const [tempStatus, setTempStatus] = useState('');
   const [tempPriority, setTempPriority] = useState('');
-  const [activeFilters, setActiveFilters] = useState({ search: '', status: '', priority: '' });
+  const [tempUser, setTempUser] = useState('');
+  const [users, setUsers] = useState([]);
+  const [activeFilters, setActiveFilters] = useState({ search: '', status: '', priority: '', user: '' });
 
   // Mapeos de Enums
   const estadoMap = { 0: 'Abierta', 1: 'En Progreso', 2: 'Resuelta', 3: 'Cerrada' };
@@ -22,7 +24,7 @@ export default function IncidentList({ incidents, setIncidents }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setActiveFilters({ search: tempSearch, status: tempStatus, priority: tempPriority });
+    setActiveFilters({ search: tempSearch, status: tempStatus, priority: tempPriority, user: tempUser });
   };
 
   const handleDelete = async (id) => {
@@ -53,17 +55,32 @@ export default function IncidentList({ incidents, setIncidents }) {
     }
   };
 
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const data = await getUsuarios();
+        setUsers(data || []);
+      } catch (error) {
+        console.error('Error cargando usuarios:', error);
+      }
+    };
+
+    loadUsers();
+  }, []);
+
   const filteredIncidents = incidents.filter(inc => {
     // Convertir enums a strings para comparar (usar camelCase como devuelve el backend)
     const incidenciaEstado = getStatusLabel(inc.estado);
     const incidenciaPrioridad = getPriorityLabel(inc.prioridad);
+    const incidenciaUsuario = inc.usuarioAsignado?.trim() || '';
     
     const matchesSearch = !activeFilters.search || inc.titulo?.toLowerCase().includes(activeFilters.search.toLowerCase());
     const matchesStatus = !activeFilters.status || incidenciaEstado === activeFilters.status;
     const matchesPriority = !activeFilters.priority || incidenciaPrioridad === activeFilters.priority;
+    const matchesUser = !activeFilters.user || incidenciaUsuario.toLowerCase() === activeFilters.user.toLowerCase();
     
-    const matches = matchesSearch && matchesStatus && matchesPriority;
-    console.log('Incidencia:', inc.titulo, '| Estado:', inc.estado, '(', incidenciaEstado, ') | Matches:', matches);
+    const matches = matchesSearch && matchesStatus && matchesPriority && matchesUser;
+    console.log('Incidencia:', inc.titulo, '| Estado:', inc.estado, '(', incidenciaEstado, ') | Usuario:', incidenciaUsuario, '| Matches:', matches);
     
     return matches;
   });
@@ -110,6 +127,15 @@ export default function IncidentList({ incidents, setIncidents }) {
           <option value="Media">Media</option>
           <option value="Alta">Alta</option>
           <option value="Crítica">Crítica</option>
+        </select>
+        <select className="search-input flex-1" value={tempUser} onChange={(e) => setTempUser(e.target.value)}>
+          <option value="">Usuarios</option>
+          {Array.from(new Set((users.length ? users : incidents)
+            .map(u => (u.email || u.Email || u.usuarioAsignado || '').trim())
+            .filter(Boolean)))
+            .map((user) => (
+              <option key={user} value={user}>{user}</option>
+            ))}
         </select>
         <button type="submit" className="btn-search">
           <Search size={18}/> BUSCAR
