@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Eye, Edit3, Trash2, User, Calendar } from 'lucide-react';
 import Swal from 'sweetalert2';
+import { deleteIncidencia } from '../services/incidencias-service';
 
 export default function IncidentList({ incidents, setIncidents }) {
   const [tempSearch, setTempSearch] = useState('');
@@ -24,20 +25,32 @@ export default function IncidentList({ incidents, setIncidents }) {
     setActiveFilters({ search: tempSearch, status: tempStatus, priority: tempPriority });
   };
 
-  const handleDelete = (id) => {
-    Swal.fire({
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
       title: '¿Borrar incidencia?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#e5002d',
       confirmButtonText: 'Sí, eliminar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Usar 'id' en minúscula para coincidir con el backend
-        setIncidents(incidents.filter(inc => inc.id !== id));
-        Swal.fire('Eliminado', '', 'success');
-      }
     });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    try {
+      await deleteIncidencia(id);
+      setIncidents(incidents.filter(inc => inc.id !== id));
+      Swal.fire('Eliminado', '', 'success');
+    } catch (error) {
+      console.error('Error borrando incidencia:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al borrar',
+        text: error.message || 'No se pudo eliminar la incidencia en el servidor',
+        confirmButtonColor: '#e5002d'
+      });
+    }
   };
 
   const filteredIncidents = incidents.filter(inc => {
