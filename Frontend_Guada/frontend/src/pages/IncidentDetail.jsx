@@ -125,7 +125,7 @@ export default function IncidentDetail({ incidents, setIncidents }) {
         </div>
 
         <div className="description-section" style={{ marginTop: '30px', marginBottom: '25px' }}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '20px', color: '#333', marginBottom: '15px', borderBottom: '2px solid #eee', paddingBottom: '8px' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '18px', color: '#333', marginBottom: '15px', borderBottom: '2px solid #eee', paddingBottom: '8px' }}>
             <FileText size={20} color='#d477fb' /><strong> Descripción Incidencia</strong>
           </h3>
           <p className="description-text" style={{ background: '#f9f9f9', padding: '18px', borderRadius: '10px', border: '1px solid #eee', lineHeight: '1.6', color: '#444' }}>
@@ -146,7 +146,7 @@ export default function IncidentDetail({ incidents, setIncidents }) {
         <hr className="detail-hr" />
         
         <h4 className="comments-title">
-          <MessageSquareText size={20} color="var(--kyocera-red)" /> Seguimiento
+          <MessageSquareText size={18} color="var(--kyocera-red)" /> Seguimiento
         </h4>
 
         <div className="comments-history">

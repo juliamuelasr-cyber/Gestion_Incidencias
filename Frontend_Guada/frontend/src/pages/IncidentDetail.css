@@ -30,7 +30,8 @@
 .detail-header h2 {
   margin: 0;
   color: var(--kyocera-red);
-  font-size: 32px;
+  font-size: 28px;
+  margin-bottom: 20px;
 }
 
 .limit-date {
@@ -46,14 +47,13 @@
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
-  font-weight: bold;
 }
 
 .tag-item {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 /* --- SECCIÓN DESCRIPCIÓN --- */
@@ -66,7 +66,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 20px;
+  font-size: 18px;
   color: #333;
   margin-bottom: 15px;
   border-bottom: 2px solid #eee;
@@ -81,7 +81,7 @@
   line-height: 1.6;
   color: #444;
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 /* --- ICONOS ESPECÍFICOS --- */
@@ -94,7 +94,7 @@
   gap: 8px;
   color: #333;
   margin-bottom: 20px;
-  font-size: 20px; 
+  font-size: 18px; 
 }
 
 .dates-grid {
@@ -108,7 +108,7 @@
 }
 
 .date-item {
-  font-size: 20px;
+  font-size: 16px;
   color: #777;
   display: flex;
   align-items: center;
@@ -140,19 +140,19 @@
 }
 
 .comment-block {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid #f0f0f0;
 }
 
 .comment-date {
-  font-size: 18px;
+  font-size: 12px;
   color: #999;
-  margin-bottom: 4px;
+
 }
 
 .comment-text {
-  font-size: 18px;
+  font-size: 14px;
   color: #333;
 }
 

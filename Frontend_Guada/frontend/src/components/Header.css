@@ -58,6 +58,10 @@
   padding-left: 20px;
 }
 
+.nav-links a:hover, .logout-btn:hover {
+  color: var(--kyocera-red);
+}
+
 /* =========================
    RESPONSIVE DESIGN
 ========================= */
