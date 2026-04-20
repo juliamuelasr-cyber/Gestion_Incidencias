@@ -10,17 +10,43 @@ export default function IncidentList({ incidents, setIncidents }) {
   const [tempPriority, setTempPriority] = useState('');
   const [tempUser, setTempUser] = useState('');
   const [users, setUsers] = useState([]);
-  const [activeFilters, setActiveFilters] = useState({ search: '', status: '', priority: '', user: '' });
+  const [userSearch, setUserSearch] = useState('');
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [selectedUserDisplay, setSelectedUserDisplay] = useState('Usuario asignado');
 
-  // Mapeos de Enums
   const estadoMap = { 0: 'Abierta', 1: 'En Progreso', 2: 'Resuelta', 3: 'Cerrada' };
   const prioridadMap = { 0: 'Baja', 1: 'Media', 2: 'Alta', 3: 'Crítica' };
 
   const getStatusLabel = (estado) => estadoMap[estado] || String(estado);
   const getPriorityLabel = (prioridad) => prioridadMap[prioridad] || String(prioridad);
 
-  console.log('IncidentList recibió incidencias:', incidents);
-  console.log('Incidencias count:', incidents?.length);
+  // --- LÓGICA DE CARGA DE USUARIOS RECUPERADA ---
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const data = await getUsuarios();
+        let allUsers = data || [];
+
+        // Recuperar usuarios que están en las incidencias pero no en la API
+        const assignedUsers = incidents
+          .map(inc => inc.usuarioAsignado?.trim())
+          .filter(Boolean)
+          .filter(assignedUser => !allUsers.some(user => user.nombre === assignedUser))
+          .map(name => ({ id: `extra-${name}`, nombre: name }));
+
+        setUsers([...allUsers, ...assignedUsers]);
+      } catch (error) {
+        console.error('Error cargando usuarios:', error);
+        // Fallback: solo los usuarios de las incidencias
+        const fallbackUsers = incidents
+          .map(inc => inc.usuarioAsignado?.trim())
+          .filter(Boolean)
+          .map(name => ({ id: `fb-${name}`, nombre: name }));
+        setUsers(fallbackUsers);
+      }
+    };
+    loadUsers();
+  }, [incidents]);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -30,120 +56,120 @@ export default function IncidentList({ incidents, setIncidents }) {
       confirmButtonColor: '#e5002d',
       confirmButtonText: 'Sí, eliminar'
     });
-
-    if (!result.isConfirmed) {
-      return;
-    }
-
-    try {
-      await deleteIncidencia(id);
-      setIncidents(incidents.filter(inc => inc.id !== id));
-      Swal.fire('Eliminado', '', 'success');
-    } catch (error) {
-      console.error('Error borrando incidencia:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error al borrar',
-        text: error.message || 'No se pudo eliminar la incidencia en el servidor',
-        confirmButtonColor: '#e5002d'
-      });
+    if (result.isConfirmed) {
+      try {
+        await deleteIncidencia(id);
+        setIncidents(incidents.filter(inc => inc.id !== id));
+        Swal.fire('Eliminado', '', 'success');
+      } catch (error) {
+        Swal.fire({ icon: 'error', title: 'Error al borrar', confirmButtonColor: '#e5002d' });
+      }
     }
   };
 
+  const handleUserSelect = (user) => {
+    setTempUser(user.nombre);
+    setSelectedUserDisplay(user.nombre);
+    setUserSearch('');
+    setShowUserDropdown(false);
+  };
+
+  const handleClearUser = (e) => {
+    e.stopPropagation();
+    setTempUser('');
+    setSelectedUserDisplay('Seleccionar usuario');
+    setUserSearch('');
+    setShowUserDropdown(false);
+  };
+
+  // Cerrar al hacer clic fuera
   useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const data = await getUsuarios();
-        setUsers(data || []);
-      } catch (error) {
-        console.error('Error cargando usuarios:', error);
+    const handleClickOutside = (e) => {
+      if (showUserDropdown && !e.target.closest('.user-dropdown-container')) {
+        setShowUserDropdown(false);
       }
     };
-
-    loadUsers();
-  }, []);
-
-  // Filtro automático: se ejecuta cada vez que cambian los filtros temporales
-  useEffect(() => {
-    setActiveFilters({ search: tempSearch, status: tempStatus, priority: tempPriority, user: tempUser });
-  }, [tempSearch, tempStatus, tempPriority, tempUser]);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showUserDropdown]);
 
   const filteredIncidents = incidents.filter(inc => {
-    // Convertir enums a strings para comparar (usar camelCase como devuelve el backend)
-    const incidenciaEstado = getStatusLabel(inc.estado);
-    const incidenciaPrioridad = getPriorityLabel(inc.prioridad);
-    const incidenciaUsuario = inc.usuarioAsignado?.trim() || '';
-    
-    const matchesSearch = !activeFilters.search || inc.titulo?.toLowerCase().includes(activeFilters.search.toLowerCase());
-    const matchesStatus = !activeFilters.status || incidenciaEstado === activeFilters.status;
-    const matchesPriority = !activeFilters.priority || incidenciaPrioridad === activeFilters.priority;
-    const matchesUser = !activeFilters.user || incidenciaUsuario.toLowerCase() === activeFilters.user.toLowerCase();
-    
-    const matches = matchesSearch && matchesStatus && matchesPriority && matchesUser;
-    console.log('Incidencia:', inc.titulo, '| Estado:', inc.estado, '(', incidenciaEstado, ') | Usuario:', incidenciaUsuario, '| Matches:', matches);
-    
-    return matches;
+    const matchesSearch = !tempSearch || inc.titulo?.toLowerCase().includes(tempSearch.toLowerCase());
+    const matchesStatus = !tempStatus || getStatusLabel(inc.estado) === tempStatus;
+    const matchesPriority = !tempPriority || getPriorityLabel(inc.prioridad) === tempPriority;
+    const matchesUser = !tempUser || inc.usuarioAsignado?.trim() === tempUser;
+    return matchesSearch && matchesStatus && matchesPriority && matchesUser;
   });
 
-  console.log('Filtered incidents:', filteredIncidents.length);
-
-  // CORRECCIÓN: El backend devuelve EnProgreso sin espacio (según Estado.cs)
-  const getStatusColor = (s) => ({
-    'Abierta': '#3498db', 
-    'En Progreso': '#f39c12', 
-    'Resuelta': '#2ecc71', 
-    'Cerrada': '#646464'
-  }[s] || '#ccc');
-
-  const getPriorityColor = (p) => ({
-    'Baja': '#2ecc71', 
-    'Media': '#f1c40f', 
-    'Alta': '#e67e22', 
-    'Crítica': '#e74c3c'
-  }[p] || '#ccc');
+  const getStatusColor = (s) => ({ 'Abierta': '#3498db', 'En Progreso': '#f39c12', 'Resuelta': '#2ecc71', 'Cerrada': '#646464' }[s] || '#ccc');
+  const getPriorityColor = (p) => ({ 'Baja': '#2ecc71', 'Media': '#f1c40f', 'Alta': '#e67e22', 'Crítica': '#e74c3c' }[p] || '#ccc');
 
   return (
     <div className="incident-page">
       <h2 className="page-title">Listado de Incidencias</h2>
 
-      <form className="search-form">
-        <input 
-          className="search-input flex-2" 
-          type="text" 
-          placeholder="Buscar incidencia..." 
-          value={tempSearch} 
-          onChange={(e) => setTempSearch(e.target.value)} 
+      <form className="search-form" onSubmit={(e) => e.preventDefault()}>
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Buscar incidencia..."
+          value={tempSearch}
+          onChange={(e) => setTempSearch(e.target.value)}
         />
-        <select className="search-input flex-1" value={tempStatus} onChange={(e) => setTempStatus(e.target.value)}>
+        
+        <select className="search-input" value={tempStatus} onChange={(e) => setTempStatus(e.target.value)}>
           <option value="">Estados</option>
           <option value="Abierta">Abierta</option>
           <option value="En Progreso">En Progreso</option>
           <option value="Resuelta">Resuelta</option>
           <option value="Cerrada">Cerrada</option>
         </select>
-        <select className="search-input flex-1" value={tempPriority} onChange={(e) => setTempPriority(e.target.value)}>
+
+        <select className="search-input" value={tempPriority} onChange={(e) => setTempPriority(e.target.value)}>
           <option value="">Prioridades</option>
           <option value="Baja">Baja</option>
           <option value="Media">Media</option>
           <option value="Alta">Alta</option>
           <option value="Crítica">Crítica</option>
         </select>
-        <select className="search-input flex-1" value={tempUser} onChange={(e) => setTempUser(e.target.value)}>
-          <option value="">Usuarios</option>
-          {Array.from(new Set((users.length ? users : incidents)
-            .map(u => (u.email || u.Email || u.usuarioAsignado || '').trim())
-            .filter(Boolean)))
-            .map((user) => (
-              <option key={user} value={user}>{user}</option>
-            ))}
-        </select>
+
+        <div className="user-dropdown-container">
+          <div
+            className={`user-dropdown-trigger ${showUserDropdown ? 'active' : ''}`}
+            onClick={() => setShowUserDropdown(!showUserDropdown)}
+          >
+            <span className="selected-text">{selectedUserDisplay}</span>
+            <div className="arrow-wrapper">
+              {tempUser && <span className="clear-user-x" onClick={handleClearUser}>✕</span>}
+              <span className="svg-arrow"></span>
+            </div>
+          </div>
+          {showUserDropdown && (
+            <div className="user-dropdown">
+              <input
+                type="text"
+                placeholder="Buscar usuario..."
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
+                className="user-search-input-inner"
+                autoFocus
+              />
+              <div className="user-list">
+                {users.filter(u => u.nombre.toLowerCase().includes(userSearch.toLowerCase())).map((user) => (
+                  <div key={user.id} className="user-dropdown-item" onClick={() => handleUserSelect(user)}>
+                    {user.nombre}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </form>
 
       <div className="incident-grid">
         {filteredIncidents.map(incident => (
           <div key={incident.id} className="incident-card">
             <div className="card-header">
-              {/* Convertir enums a strings usando mapeos */}
               <span style={{ color: getStatusColor(getStatusLabel(incident.estado)) }} className="status-badge">
                 {getStatusLabel(incident.estado).toUpperCase()}
               </span>
@@ -151,36 +177,22 @@ export default function IncidentList({ incidents, setIncidents }) {
                 {getPriorityLabel(incident.prioridad).toUpperCase()}
               </span>
             </div>
-            
-            <h3 className="card-title">
-              {incident.titulo}
-            </h3>
-            
+            <h3 className="card-title">{incident.titulo}</h3>
             <div className="card-footer-content">
               <p className="info-row assigned-row">
-                <User size={20}/> 
-                <span>Asignado a: {incident.usuarioAsignado || 'Sin asignar'}</span>
+                <User size={20}/> <span>Asignado a: {incident.usuarioAsignado || 'Sin asignar'}</span>
               </p>
               <p className="info-row date-row">
-                <Calendar size={20}/> 
-                <span>Fecha creación: {new Date(incident.fechaCreacion).toLocaleDateString()}</span>
+                <Calendar size={20}/> <span>Fecha: {new Date(incident.fechaCreacion).toLocaleDateString()}</span>
               </p>
-              
               <div className="card-actions">
-                <Link className="btn btn-detail" to={`/incidencia/${incident.id}`}>
-                  <Eye size={18}/> Detalle
-                </Link>
-                <Link className="btn btn-edit" to={`/editar/${incident.id}`}>
-                  <Edit3 size={18}/> Editar
-                </Link>
-                <button className="btn btn-danger" onClick={() => handleDelete(incident.id)}>
-                  <Trash2 size={18}/> Borrar
-                </button>
+                <Link className="btn btn-detail" to={`/incidencia/${incident.id}`}><Eye size={18}/> Detalle</Link>
+                <Link className="btn btn-edit" to={`/editar/${incident.id}`}><Edit3 size={18}/> Editar</Link>
+                <button className="btn btn-danger" onClick={() => handleDelete(incident.id)}><Trash2 size={18}/> Borrar</button>
               </div>
             </div>
           </div>
         ))}
-        {filteredIncidents.length === 0 && <p className="no-results">No se encontraron incidencias.</p>}
       </div>
     </div>
   );
