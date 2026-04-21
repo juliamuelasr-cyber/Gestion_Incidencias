@@ -51,9 +51,9 @@ namespace Kyocera.Microservice.Controllers
                 incidencias = incidencias.Where(i => i.Id == filter.Id.Value);
             }
 
-            // Paginación: asegurar valores por defecto válidos
-            if (filter.PageNumber <= 0) filter.PageNumber = 1;
-            if (filter.PageSize <= 0) filter.PageSize = 100; // Aumentado a 100 para obtener más resultados por defecto
+           
+            if (filter.PageNumber <= 0) filter.PageNumber = 1; //Paginación
+            if (filter.PageSize <= 0) filter.PageSize = 100; 
 
             var totalItems = incidencias.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)filter.PageSize);
