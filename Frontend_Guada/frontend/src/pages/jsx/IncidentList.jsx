@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, Edit3, Trash2, User, Calendar } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { deleteIncidencia, getUsuarios } from '../Services/incidencias-service';
+import { deleteIncidencia, getUsuarios } from '../../Services/incidencias-service';
+import '../css/IncidentList.css';
 
 export default function IncidentList({ incidents = [], setIncidents }) {
   const [tempSearch, setTempSearch] = useState('');
@@ -166,7 +167,6 @@ export default function IncidentList({ incidents = [], setIncidents }) {
             <span className="selected-text">{selectedUserDisplay}</span>
             <div className="arrow-wrapper">
               {tempUser && <span className="clear-user-x" onClick={handleClearUser}>✕</span>}
-              <span className="svg-arrow"></span>
             </div>
           </div>
           {showUserDropdown && (

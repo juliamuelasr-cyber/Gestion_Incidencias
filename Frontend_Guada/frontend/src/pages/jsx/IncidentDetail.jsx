@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { MessageSquareText, CalendarClock, User2, ArrowLeft, ShieldAlert, Info, Tag, FileText } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { updateIncidencia } from '../services/incidencias-service';
-import './IncidentDetail.css'; 
+import { updateIncidencia } from '../../services/incidencias-service';
+import '../css/IncidentDetail.css'; 
 
 export default function IncidentDetail({ incidents, setIncidents }) {
   const { id } = useParams();
@@ -126,7 +126,7 @@ export default function IncidentDetail({ incidents, setIncidents }) {
 
         <div className="description-section" style={{ marginTop: '30px', marginBottom: '25px' }}>
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '18px', color: '#333', marginBottom: '15px', borderBottom: '2px solid #eee', paddingBottom: '8px' }}>
-            <FileText size={16} color='#d477fb' /><strong> Descripción Incidencia</strong>
+            <FileText size={16} color='#d477fb' />Descripción Incidencia
           </h3>
           <p className="description-text" style={{ background: '#f9f9f9', padding: '18px', borderRadius: '10px', border: '1px solid #eee', lineHeight: '1.6', color: '#444' }}>
             {incident.descripcion}
@@ -142,8 +142,6 @@ export default function IncidentDetail({ incidents, setIncidents }) {
             <CalendarClock size={16} /> <strong>Creada:</strong> {new Date(incident.fechaCreacion).toLocaleDateString('es-ES')}
           </div>
         </div>
-
-        <hr className="detail-hr" />
         
         <h4 className="comments-title">
           <MessageSquareText size={16} color="var(--kyocera-red)" /> Seguimiento

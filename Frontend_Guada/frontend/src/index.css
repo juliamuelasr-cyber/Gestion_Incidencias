@@ -1,140 +1,39 @@
 :root {
-  --text: #000000;
-  --text-h: #ffffff;
-  --bg: #f8f9fa; /* Fondo gris claro de la imagen */
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-  --kyocera-red: #c31d0e; /* Color corporativo de la imagen */
-  --btn-confirm-sweetAlert: #3085d6; /* Color de confirmación para SweetAlert */
-  --bg-sidebar: #f5a8a8; /* Fondo blanco para la barra lateral */
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  --kyocera-red: #e5002d;
+  --bg: #f8f9fa;
+  --border: #e0e0e0;
+  --text-main: #333333;
+  --text-light: #666666;
+  --shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
+  font-family: var(--sans);
   background-color: var(--bg);
+  color: var(--text-main);
+  line-height: 1.5;
 }
 
 #root {
-  width: 100%;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
-/* Estilos para el Header y títulos globales */
-h1, h2 {
-  font-family: var(--heading);
-  font-weight: 400;
+h1, h2, h3 {
+  color: var(--kyocera-red);
   text-align: center;
-  color: var(--kyocera-red); /* Títulos en rojo como en la imagen */
-}
-
-h3 {
-  font-family: var(--heading);
-  font-weight: 500;
-  text-align: center;
-  color: var(--text);
 }
 
 h1 {
-  font-size: 40px;
-  letter-spacing: 1px;
-  margin: 30px 0 20px;
-  text-transform: uppercase; /* Estilo de "GETSIÓN INCIDENCIAS" */
-  @media (max-width: 1024px) {
-    font-size: 32px;
-  }
-}
-
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 20px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-
-/* Estilos específicos para la tarjeta de Login */
-/* Usamos el estilo inline que tiene tu Login.jsx para identificarlo */
-div[style*="max-width: 400px"] {
-  background: white !important;
-  padding: 40px !important;
-  border-radius: 5px !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-  border-top: 4px solid var(--kyocera-red) !important; /* Franja roja superior */
-  margin: 20px auto !important;
-}
-
-/* Inputs del login */
-input {
-  border: 1px solid #ccc !important;
-  border-radius: 2px !important;
-  padding: 10px !important;
-}
-
-/* Botón del login */
-button[type="submit"] {
-  background-color: var(--kyocera-red) !important;
-  font-weight: bold !important;
-  text-transform: uppercase !important;
-  border-radius: 2px !important;
-  transition: opacity 0.2s;
-}
-
-button[type="submit"]:hover {
-  opacity: 0.9;
-}
-
-p {
-  margin: 0;
-}
-
-code {
-  font-family: var(--mono);
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-  border-radius: 4px;
-  color: var(--text-h);
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  margin: 2rem 0;
 }

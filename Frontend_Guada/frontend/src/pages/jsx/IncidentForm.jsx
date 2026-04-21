@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Save, ClipboardList, User, Calendar, AlertCircle } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { API_BASE_URL, authHeader } from '../services/api-config';
-import './IncidentForm.css';
+import { API_BASE_URL, authHeader } from '../../services/api-config';
+import '../css/IncidentForm.css';
 
 export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
   const { id } = useParams();
@@ -13,15 +13,14 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
     Id: 0,
     Titulo: '', 
     Descripcion: '', 
-    Estado: 0, // 0 = Abierta (según Estado.cs)
-    Prioridad: 0, // 0 = Baja (según Prioridad.cs)
+    Estado: 0,
+    Prioridad: 0,
     UsuarioAsignado: '', 
     FechaLimite: '' 
   });
 
   const MAX_TITLE_LENGTH = 80;
 
-  // Mapeo de Enums para el formulario (Texto -> Número)
   const estadoMap = { "Abierta": 0, "En Progreso": 1, "Resuelta": 2, "Cerrada": 3 };
   const prioridadMap = { "Baja": 0, "Media": 1, "Alta": 2, "Crítica": 3 };
 
@@ -37,7 +36,7 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
           Prioridad: existing.prioridad || 0,
           UsuarioAsignado: existing.usuarioAsignado || '',
           FechaLimite: existing.fechaLimite ? existing.fechaLimite.split('T')[0] : '',
-          Id: existing.id // Agregar el ID para UPDATE
+          Id: existing.id
         });
       }
     }
@@ -74,7 +73,7 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
       Estado: parseInt(formData.Estado),
       Prioridad: parseInt(formData.Prioridad),
       UsuarioAsignado: formData.UsuarioAsignado?.trim() || null,
-      FechaLimite: formData.FechaLimite || null, // Enviar null si está vacío, no string vacía
+      FechaLimite: formData.FechaLimite || null,
       Id: formData.Id || 0
     };
 
@@ -156,7 +155,6 @@ export default function IncidentForm({ incidents = [], setIncidents, onAdd }) {
             />
           </div>
 
-          {/* DESCRIPCIÓN */}
           <div className="form-group">
             <label className="form-label">Descripción Detallada</label>
             <textarea 
